@@ -24,6 +24,10 @@ orkester-plugin/
 │   │   ├── SKILL.md                      # Propale plot creation skill
 │   │   └── references/
 │   │       └── catalogue-sections.md     # Collection of sections to use
+│   ├── identity-creator/
+│   │   ├── SKILL.md                      # Identity section writer
+│   │   └── references/
+│   │       └── bloc-B-identite.md        # Guidelines for redacting each section
 │   └── base-reviewer/
 │       └── SKILL.md                      # Plot reviewing skill
 ├── agents/

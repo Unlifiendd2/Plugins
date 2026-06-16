@@ -1,7 +1,7 @@
 ---
 name: propale-maker
 description: >-
-  Aide l'utilisateur à construire une proposition commerciale (propale) sur-mesure Orkester : de la définition de la trame et du squelette à la rédaction de parties indépendantes. Ce skill est un skill "parent" qui déclenche à la demande de l'utilisateur différents skills "enfants" spécialisés en fonction des besoins. À utiliser dès que l'utilisateur prépare, cadre, structure, planifie, rédige ou démarre une proposition commerciale, une propale, une réponse à appel d'offres, une offre de service, un devis structuré, une offre TMA/TME, une offre de reprise/maintenance, ou un document de réponse à un client ou prospect pour Orkester.
+  Aide l'utilisateur à construire une proposition commerciale (propale) sur-mesure Orkester : de la définition de la trame et du squelette à la rédaction de parties indépendantes. Ce skill est un skill "parent", le point d'entrée du plugin `orkester-plugin` qui déclenche à la demande de l'utilisateur différents skills "enfants" spécialisés en fonction des besoins. À utiliser dès que l'utilisateur prépare, cadre, structure, planifie, rédige ou démarre une proposition commerciale, une propale, une réponse à appel d'offres, une offre de service, un devis structuré, une offre TMA/TME, une offre de reprise/maintenance, ou un document de réponse à un client ou prospect pour Orkester.
 ---
 
 # Rédaction de proposition commerciale Orkester
@@ -16,6 +16,8 @@ Les différentes parties ci-dessous présentent les skills spécialisés dont tu
 
 ## Les skills "enfants" à déclencher à la demande
 
+Les skills sont ordonnés de manière chronologique cohérente, mais cet ordre n'est en aucun cas une obligation, c'est une suggestion à adapter à l'utilisateur et ses besoins.
+
 ### Création de trame sur mesure — `propale-base-creator`
 
 Ce skill contient un catalogue des sections types tirées des précédentes propales Orkester, en décrivant leur raison d'être (objectif) et dans quel contexte elles sont généralement inclues. En se basant sur le contexte projet spécifique, il déduit les 4 axes qui qualifient la mission, et il propose à l'utilisateur une trame structurée et ordonnée pour la propale.  
@@ -25,3 +27,8 @@ Préférer un déclenchement directement dans le fil principal car le contexte p
 
 Ce skill passe en revue la cohérence et la pertinence d'une trame, avec une emphase sur le storytelling, proposer le déclenchement à l'issue de `propale-base-creator` ou après toute trame générée ou proposée par l'utilisateur.  
 A déclencher au travers du sous-agent `skill-executor` pour bénéficier d'un contexte frais et éliminer les potentiels biais. Il faut donc lui fournir à l'invocation le template `references/prompt-base-reviewer.md` remplit.
+
+### Rédaction des parties du bloc B — `identity-creator`
+
+Ce skill rédige les parties du bloc B à la demande (1 ou plusieurs) en respectant un guide de rédaction.  
+A déclencher au travers du sous-agent `skill-executor`. Lire le prompt d'invocation `prompt-identity-creator`. Inclure le contexte projet. Si une trame validée existe dans le contexte (générée ou proposée par l'utilisateur), inclure un résumé global de la trame et où se situe la partie dans cette trame, ainsi que la raison d'être et l'objectif de chaque partie.
