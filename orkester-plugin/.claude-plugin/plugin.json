@@ -1,0 +1,8 @@
+{
+  "name": "orkester-plugin",
+  "version": "0.1.0",
+  "description": "A plugin for Orkester employees for Cowork. Includes a business proposal skill (propale-maker), and a collection of child skills triggered by the main skill.",
+  "author": {
+    "name": "Paulin B"
+  }
+}
