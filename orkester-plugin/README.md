@@ -19,7 +19,7 @@ orkester-plugin/
 │   ├── propale-maker/
 │   │   ├── SKILL.md                      # Main skill to manage all the others
 │   │   └── references/
-│   │       └── prompt-{skill-name}.md    # Prompts for subagents
+│   │       └── prompt-{skill-name}.md    # Prompts with context for subagents
 │   ├── propale-base-creator/
 │   │   ├── SKILL.md                      # Propale plot creation skill
 │   │   └── references/

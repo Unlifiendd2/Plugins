@@ -6,6 +6,6 @@ Input user
 
 consultation catalogue sections -> proposition squelette -> crtitique reviewer (indépendant contexte frais) -> refinement user/Calude -> proposition corrigée (-> 2è review opt)
 
-## Qui somme nous maker
+## Identity section
 
-indépendant contexte frais : contexte projet fournit par l'orchestrateur -> interraction orkester-kb -> qui somme nous personalisé contexte projet
+Indépendant contexte frais : contexte projet fournit par l'orchestrateur -> interraction orkester-kb -> qui somme nous personalisé pour chaque section demandée (bloc entier ou setions indépendantes)
