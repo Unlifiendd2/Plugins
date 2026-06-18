@@ -24,13 +24,12 @@ Orkester capitalise sur ses propales gagnantes : les faits d'identité (effectif
 
 Sections couvertes : **B1** (qui sommes-nous), **B2** (proposition de valeur / ADN), **B3** (domaines d'intervention), **B4** (expertises : technos, partenariats, certifications), **B5** (pourquoi Orkester pour ce projet), **B6** (historique / rétrospective de la relation), **B7** (références emblématiques).
 
-## Les trois entrées
+## Les entrées
 
-Avant de rédiger, réunir ces trois éléments. S'il en manque un, renvoyer un message final en expliquant ce qu'il manque.
+Avant de rédiger, lire les deux fichiers fournis par l'agent invocateur. S'ils sont absents, renvoyer un message indiquant ce qui manque.
 
-1. **La trame** — le plan. On y lit, pour chaque section identité, son **statut** et surtout ses consignes **« À rédiger »** : ce sont des instructions fermes, pas des suggestions. Si la trame définit un **fil rouge / promesse-signature**, il prime sur tout : chaque section identité doit le servir.
-2. **La position de la section dans le plan** — l'ordre détermine ce que la section doit *préparer* (ce qui suit) et *encaisser* (ce qui précède). Une section identité placée tôt n'a pas le même travail que la même placée après la compréhension du besoin. Voir « Lire la position » plus bas.
-3. **Le contexte projet** — au minimum les 4 axes de qualification (BUILD/RUN ; ECOM_B2B / ECOM_B2C / APP_MOBILE ; NOUVEAU_CLIENT / CLIENT_EXISTANT ; APPEL_OFFRES / ECHANGE_DIRECT), le nom et le secteur du client, et tout élément différenciant connu. Les axes pilotent le filtrage du contenu (cf. référence).
+1. **`trame-{nom-projet}-V{n}.md`** — le plan. Pour chaque section identité : son **statut** et ses consignes **« À rédiger »** (instructions fermes, pas des suggestions). Le fil rouge / promesse-signature y est défini s'il existe — il prime sur tout. La **position de chaque section** est déduite de l'ordre du plan (numéro, sections précédentes et suivantes) ; voir « Lire la position » plus bas.
+2. **`contexte-{nom-projet}.md`** — contient les 4 axes de qualification (BUILD/RUN ; ECOM_B2B / ECOM_B2C / APP_MOBILE ; NOUVEAU_CLIENT / CLIENT_EXISTANT ; APPEL_OFFRES / ECHANGE_DIRECT), le nom et le secteur du client, les différenciateurs, et tout élément deal utile. Les axes pilotent le filtrage du contenu (cf. référence).
 
 ## Principe de sourcing : hybride, KB d'abord, jamais inventer
 

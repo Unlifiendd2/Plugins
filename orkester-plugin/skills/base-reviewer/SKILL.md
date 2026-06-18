@@ -18,11 +18,12 @@ Conséquences sur le comportement :
 
 ## Entrées attendues
 
-1. **La trame à analyser** (liste ordonnée des sections + objectifs + consignes « À rédiger »).
-2. **La qualification de la mission** (4 axes : type de mission `BUILD`/`RUN`, nature du produit, relation client, contexte commercial).
-3. **Le contexte projet / deal** : client, secteur, objectif de la propale, critères de décision du client, concurrence éventuelle, historique de la relation, différenciateurs à faire ressortir, contraintes (budget, délai, ton, longueur).
+Les entrées sont fournies via les chemins de deux fichiers de l'espace de travail :
 
-Si la qualification ou le contexte manquent, les déduire de la trame et le signaler.
+1. **`trame-{nom-projet}-V{n}.md`** — la trame à analyser (sections ordonnées + objectifs + consignes « À rédiger »).
+2. **`contexte-{nom-projet}.md`** — contient la qualification de la mission (4 axes : type `BUILD`/`RUN`, nature du produit, relation client, contexte commercial) et le contexte deal (client, secteur, objectif, critères de décision, concurrence, historique, différenciateurs, contraintes, fil rouge).
+
+Si un fichier est absent ou incomplet, déduire ce qui manque de l'autre et le signaler dans la section « Hypothèses ».
 
 ## Les trois lentilles d'analyse
 

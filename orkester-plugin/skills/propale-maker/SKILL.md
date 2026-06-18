@@ -10,26 +10,78 @@ Tu t'adresse à un project owner experimenté de Orkester, ESN spécialisée dan
 
 ## Ce que fait ce skill
 
-Orkester gagne ses propales en capitalisant sur ses précédentes propositions commerciales (propales) gagnées, tous stockés dans la base de donnée `Orkester-kb` indexée sémantiquement et accessible via le mcp du même nom. Ce skill aide l'utilisateur au travers de la rédaction d'une propale (réponse appel d'offre, prospect). Ce skill est le skill "parent", qui orchestre les opérations en déclenchant les autres skills correspondant aux différentes parties, et en déléguant quand le contexte s'y prête, le skill à un sous agent (l'agent `skill-executor` ${CLAUDE_PLUGIN_ROOT}/agents/skill-executor.md est l'agent d'execution de skill généraliste mis à disposition). Ce skill n'a pas vocation à générer des documents complets de manière autonome, il accompagne l'utilisateur dans la création du document en proposant des trames, des contenus, en analysant le storytelling et la pertinence de la propale, et en challengant l'utilisateur à chaque étape du processus.  
+Orkester gagne ses propales en capitalisant sur ses précédentes propositions commerciales (propales) gagnées, stockées dans la base de données `Orkester-kb` indexée sémantiquement et accessible via le MCP du même nom. Ce skill est le point d'entrée du plugin : il cadre le projet avec l'utilisateur, crée le fichier de contexte, puis met à disposition une **boîte à outils** de skills spécialisés que l'utilisateur active à la demande.
 
-Les différentes parties ci-dessous présentent les skills spécialisés dont tu dispose pour aider au mieux l'utilisateur.
+Ce skill ne génère rien de manière autonome et ne déclenche jamais un outil sans que l'utilisateur l'ait demandé. Son rôle est d'accompagner, pas d'orchestrer.
 
-## Les skills "enfants" à déclencher à la demande
+Pour déléguer un outil en contexte frais, utiliser l'agent `skill-executor` disponible à `${CLAUDE_PLUGIN_ROOT}/agents/skill-executor.md`.
 
-Les skills sont ordonnés de manière chronologique cohérente, mais cet ordre n'est en aucun cas une obligation, c'est une suggestion à adapter à l'utilisateur et ses besoins. Ne pas executer le workflow d'une traite sans s'arrêter, dire ce qui a été fait, produit, quelles étapes suivent logiquement, et demander quelle étape l'utilisateur veut ensuite réaliser.  
-A l'issue de chaque skill ou tâche effectuée, une trace dans un ou plusieurs fichiers doit apparaitre dans l'espace de travail et être accessible pour l'utilisateur, cela permet de pouvoir scinder un travail en plusieurs sessions, sans repartir de zéro, ou de déléguer une tâche à un sous-agent.
+## Démarrage
+
+Quand l'utilisateur demande de l'aide pour une propale :
+
+1. **Collecter les informations projet** — depuis un fichier joint ou en posant des questions courtes et groupées (client, secteur, type de mission, contexte commercial, contraintes connues). Ne pas poser toutes les questions d'un coup si l'essentiel permet déjà de démarrer.
+2. **Créer `contexte-{nom-projet}.md`** — avec les informations collectées. Les champs non encore connus restent vides ou marqués `À compléter`.
+3. **Présenter les outils disponibles** et demander lequel l'utilisateur veut lancer. Ne jamais enchaîner automatiquement sur un outil.
+
+Les différentes parties ci-dessous présentent les outils disponibles.
+
+## Fichiers de session
+
+Chaque session de travail produit deux fichiers de référence dans l'espace de travail, lisibles par l'utilisateur et par les sous-agents :
+
+- **`contexte-{nom-projet}.md`** — créé par ce skill **au démarrage du workflow**, dès que le nom du projet ou le client est identifié, avant tout skill enfant. Centralise la qualification de la mission (4 axes), le contexte deal et la progression du workflow. **C'est le premier fichier à lire pour reprendre une session ou briefer un sous-agent.**
+- **`trame-{nom-projet}-V{n-version}.md`** — créé par `propale-base-creator`. Contient uniquement la trame (sections ordonnées, statuts, objectifs, consignes « À rédiger »).
+
+### Reprendre une session
+
+Si l'utilisateur mentionne un projet déjà commencé, lire d'abord `contexte-{nom-projet}.md` pour reconstituer le contexte et l'état d'avancement, puis présenter les outils disponibles en indiquant ce qui est déjà fait. Ne pas lancer automatiquement une nouvelle étape.
+
+### Format du fichier `contexte-{nom-projet}.md`
+
+```
+# Contexte projet — {nom-projet}
+
+## Identification
+- Nom du projet : {nom-projet}
+- Client : {client} — Secteur : {secteur}
+
+## Qualification de la mission (4 axes)
+- Type : {BUILD|RUN}
+- Produit : {ECOM_B2B|ECOM_B2C|APP_MOBILE}
+- Relation : {NOUVEAU_CLIENT|CLIENT_EXISTANT}
+- Contexte commercial : {APPEL_OFFRES|ECHANGE_DIRECT}
+
+## Contexte deal
+- Objectif de la propale : ...
+- Critères de décision du client : ...
+- Concurrence éventuelle : ...
+- Différenciateurs à mettre en avant : ...
+- Contraintes (budget, délai, ton, longueur) : ...
+- Fil rouge / promesse-signature : ...
+
+## Progression
+- [x] Contexte initialisé
+- [ ] Trame créée — `trame-{nom-projet}-V1.md`
+- [ ] Trame révisée — `revue-trame-{nom-projet}-1.md`
+- [ ] Bloc B rédigé — `bloc-b-identite-{nom-projet}-V1.md`
+```
+
+## Outils disponibles
+
+Chaque outil est indépendant. Ne jamais en déclencher un sans que l'utilisateur l'ait demandé. Après chaque exécution, mettre à jour la section `## Progression` du fichier `contexte-{nom-projet}.md` et indiquer à l'utilisateur ce qui a été produit — possibilité de suggérer un ou des outils suivants pertinents.
 
 ### Création de trame sur mesure — `propale-base-creator`
 
 Ce skill contient un catalogue des sections types tirées des précédentes propales Orkester, en décrivant leur raison d'être (objectif) et dans quel contexte elles sont généralement incluses. En se basant sur le contexte projet spécifique, il déduit les 4 axes qui qualifient la mission, et il propose à l'utilisateur une trame structurée et ordonnée pour la propale.  
-Préférer un déclenchement directement dans le fil principal car le contexte projet complet est pertinent à avoir pour cette partie. Utiliser un sous-agent seulement si c'est justifié, et dans ce cas lui fournir le contexte projet nécessaire à la création de la trame. Produire un fichier `trame-{nom-projet}-V{n-version}.md`.
+Préférer un déclenchement directement dans le fil principal car le contexte projet complet est pertinent à avoir pour cette partie. Utiliser un sous-agent seulement si c'est justifié, et dans ce cas lui fournir le chemin du fichier `contexte-{nom-projet}.md`. Produit deux sorties : met à jour la section `## Qualification de la mission` du fichier `contexte-{nom-projet}.md` avec les 4 axes confirmés, puis génère un fichier `trame-{nom-projet}-V{n-version}.md` contenant uniquement la trame (sans bloc de qualification).
 
 ### Revue de trame — `base-reviewer`
 
-Ce skill passe en revue la cohérence et la pertinence d'une trame, avec une emphase sur le storytelling, proposer le déclenchement à l'issue de `propale-base-creator` ou après toute trame générée ou proposée par l'utilisateur.  
-A déclencher au travers du sous-agent `skill-executor` pour bénéficier d'un contexte frais et éliminer les potentiels biais. Il faut donc lui fournir le chemin du fichier contenant la trame à évaluer.
+Ce skill passe en revue la cohérence et la pertinence d'une trame, avec une emphase sur le storytelling.  
+A déclencher au travers du sous-agent `skill-executor` pour bénéficier d'un contexte frais et éliminer les potentiels biais. Lui fournir les chemins du fichier `contexte-{nom-projet}.md` (qualification des 4 axes + contexte deal) et du fichier trame `trame-{nom-projet}-V{n}.md`.
 
 ### Rédaction des parties du bloc B — `identity-creator`
 
 Ce skill rédige les parties du bloc B à la demande (1 ou plusieurs) en respectant un guide de rédaction.  
-A déclencher au travers du sous-agent `skill-executor`. Lui fournir le chemin du fichier contenant la trame retenue.
+A déclencher au travers du sous-agent `skill-executor`. Lui fournir les chemins du fichier `contexte-{nom-projet}.md` (qualification des 4 axes + contexte deal) et du fichier trame retenue `trame-{nom-projet}-V{n}.md`.

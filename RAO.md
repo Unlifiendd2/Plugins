@@ -2,13 +2,14 @@
 
 Input user
 
-## Structure maker
+## Trame maker
 
-consultation catalogue sections -> proposition squelette -> crtitique reviewer (indépendant contexte frais) -> refinement user/Claude -> proposition corrigée (-> 2è review opt)...
+Consultation catalogue sections + contexte conv -> proposition trame
 
-## Identity section
+## Trame reviewer (contexte frais)
 
-Indépendant contexte frais : contexte projet fournit par l'orchestrateur -> interraction orkester-kb -> qui somme nous personalisé pour chaque section demandée (bloc entier ou sections indépendantes)
+Trame + Contexte projet + ref KB -> review cohérence, pertinence, storytelling -> reco + trame réorga
 
+## Identity section (contexte frais)
 
-Faut plutôt que j'utilise des fichiers qui contienne le résultat de différentes tâche systématiquement pour pouvoir scinder le travail en sessions et pour faire transiter le travail à traiter aux sous agents.
+contexte projet + trame + ref conseil redac + ref KB -> qui somme nous personalisé pour chaque section demandée (bloc entier ou sections indépendantes)
