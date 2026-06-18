@@ -62,9 +62,7 @@ Si l'utilisateur mentionne un projet déjà commencé, lire d'abord `contexte-{n
 
 ## Progression
 - [x] Contexte initialisé
-- [ ] Trame créée — `trame-{nom-projet}-V1.md`
-- [ ] Trame révisée — `revue-trame-{nom-projet}-1.md`
-- [ ] Bloc B rédigé — `bloc-b-identite-{nom-projet}-V1.md`
+- [ ] ...
 ```
 
 ## Outils disponibles
@@ -74,7 +72,7 @@ Chaque outil est indépendant. Ne jamais en déclencher un sans que l'utilisateu
 ### Création de trame sur mesure — `propale-base-creator`
 
 Ce skill contient un catalogue des sections types tirées des précédentes propales Orkester, en décrivant leur raison d'être (objectif) et dans quel contexte elles sont généralement incluses. En se basant sur le contexte projet spécifique, il déduit les 4 axes qui qualifient la mission, et il propose à l'utilisateur une trame structurée et ordonnée pour la propale.  
-Préférer un déclenchement directement dans le fil principal car le contexte projet complet est pertinent à avoir pour cette partie. Utiliser un sous-agent seulement si c'est justifié, et dans ce cas lui fournir le chemin du fichier `contexte-{nom-projet}.md`. Produit deux sorties : met à jour la section `## Qualification de la mission` du fichier `contexte-{nom-projet}.md` avec les 4 axes confirmés, puis génère un fichier `trame-{nom-projet}-V{n-version}.md` contenant uniquement la trame (sans bloc de qualification).
+A déclencher au travers du sous-agent `skill-executor` pour bénéficier d'un contexte frais. Lui fournir le chemin du fichier `contexte-{nom-projet}.md` qui centralise la qualification de la mission et le contexte deal. Produit deux sorties : met à jour la section `## Qualification de la mission` du fichier `contexte-{nom-projet}.md` avec les 4 axes confirmés, puis génère un fichier `trame-{nom-projet}-V{n-version}.md` contenant uniquement la trame (sans bloc de qualification).
 
 ### Revue de trame — `base-reviewer`
 

@@ -70,7 +70,7 @@ Par défaut, juger sur les entrées fournies. Recourir aux outils MCP `Orkester-
 
 ## Format de sortie
 
-Restituer la revue dans cette structure dans un fichier `revue-trame-{nom-projet}-{n-version}.md` :
+Restituer la revue dans cette structure dans un fichier `revue-trame-{nom-projet}-V{n-version}.md` :
 
 ```
 # Revue de la trame — <client / objet>
