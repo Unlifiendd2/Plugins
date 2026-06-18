@@ -16,7 +16,7 @@ Les différentes parties ci-dessous présentent les skills spécialisés dont tu
 
 ## Les skills "enfants" à déclencher à la demande
 
-Les skills sont ordonnés de manière chronologique cohérente, mais cet ordre n'est en aucun cas une obligation, c'est une suggestion à adapter à l'utilisateur et ses besoins.  
+Les skills sont ordonnés de manière chronologique cohérente, mais cet ordre n'est en aucun cas une obligation, c'est une suggestion à adapter à l'utilisateur et ses besoins. Ne pas executer le workflow d'une traite sans s'arrêter, dire ce qui a été fait, produit, quelles étapes suivent logiquement, et demander quelle étape l'utilisateur veut ensuite réaliser.  
 A l'issue de chaque skill ou tâche effectuée, une trace dans un ou plusieurs fichiers doit apparaitre dans l'espace de travail et être accessible pour l'utilisateur, cela permet de pouvoir scinder un travail en plusieurs sessions, sans repartir de zéro, ou de déléguer une tâche à un sous-agent.
 
 ### Création de trame sur mesure — `propale-base-creator`
