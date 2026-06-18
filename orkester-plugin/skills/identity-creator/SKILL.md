@@ -84,7 +84,8 @@ Pour chaque section demandée :
 > - Lien au fil rouge : <comment la section sert la promesse-signature>
 ```
 
-Rendre le contenu directement réutilisable : pas de méta-commentaire dans la prose elle-même, tout le commentaire va dans les « Notes de rédaction ».
+Rendre le contenu directement réutilisable : pas de méta-commentaire dans la prose elle-même, tout le commentaire va dans les « Notes de rédaction ».  
+A produire dans un fichier `bloc-b-identité-{nom-projet}-V{n-version}.md`.
 
 ## Pièges à éviter
 
