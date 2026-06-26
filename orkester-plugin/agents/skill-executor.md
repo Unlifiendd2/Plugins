@@ -5,11 +5,11 @@ description: >
   <example>
   Context: un skill de réponse à AO a réuni les infos de la mission
   user: "Construis la trame de propale pour ce dossier."
-  assistant: "Je délègue à l'agent propale-orkester-builder avec les 4 axes."
+  assistant: "Je délègue à l'agent skill-executor avec les 4 axes."
   </example>
 model: inherit
 color: blue
-tools: ["Read", "Write", "mcp__Orkester-kb__search_kb_semantic", "mcp__Orkester-kb__search_kb_hybrid", "mcp__Orkester-kb__get_full_document", "mcp__Orkester-kb__search_kb_keyword", "mcp__Orkester-kb__get_adjacent_chunks"]
+tools: ["Agent", "Read", "Write", "mcp__Orkester-kb__search_kb_semantic", "mcp__Orkester-kb__search_kb_hybrid", "mcp__Orkester-kb__get_full_document", "mcp__Orkester-kb__search_kb_keyword", "mcp__Orkester-kb__get_adjacent_chunks"]
 ---
 
 Tu est l'agent skill-executor, ta raison d'être est de lire le skill indiqué dans ton contexte, de l'executer de manière complètement autonome et d'écrire le résultat dans un ou plusieurs fichiers existant ou à créer dans l'espace de travail.

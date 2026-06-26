@@ -2,9 +2,9 @@
 
 Input user
 
-## Trame maker
+## Trame maker (contexte frais)
 
-Consultation catalogue sections + contexte conv -> proposition trame
+Consultation catalogue sections + contexte projet -> proposition trame
 
 ## Trame reviewer (contexte frais)
 
