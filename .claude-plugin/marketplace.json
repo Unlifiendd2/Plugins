@@ -1,0 +1,27 @@
+{
+  "name": "Orkester-marketplace",
+  "owner": {
+    "name": "Orkester",
+    "email": "bonjour@orkester.com"
+  },
+  "metadata": {
+    "description": "Collection of plugins for Orkester"
+  },
+  "plugins": [
+    {
+      "name": "orkester-plugin",
+      "source": "./plugins/orkester-plugin",
+      "description": "Collection of skills for propale.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Paulin B",
+        "email": "paulin.blattmann@orkester.fr"
+      },
+      "category": "PM",
+      "keywords": [
+        "propale",
+        "projet"
+      ]
+    }
+  ]
+}

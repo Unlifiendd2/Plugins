@@ -1,0 +1,18 @@
+{
+  "name": "orkester-plugin",
+  "description": "Collection of skills for propale.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Paulin B",
+    "email": "paulin.blattmann@orkester.fr",
+    "url": "https://github.com/Unlifiendd2"
+  },
+  "homepage": "https://orkester.fr",
+  "repository": "https://github.com/Unlifiendd2/Plugins",
+  "license": "Apache 2.0",
+  "category": "PM",
+  "keywords": [
+    "propale",
+    "projet"
+  ]
+}
