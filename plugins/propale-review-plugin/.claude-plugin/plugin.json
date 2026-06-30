@@ -1,0 +1,22 @@
+{
+  "name": "propale-review-plugin",
+  "description": "Revue indépendante d'une trame de proposition commerciale selon trois axes simultanés : storytelling, cohérence et pertinence. Orchestre 3 sous-agents spécialisés en parallèle puis consolide leurs analyses.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Paulin B",
+    "email": "paulin.blattmann@orkester.fr",
+    "url": "https://github.com/Unlifiendd2"
+  },
+  "homepage": "https://orkester.fr",
+  "repository": "https://github.com/Unlifiendd2/Plugins",
+  "license": "Apache 2.0",
+  "category": "PM",
+  "keywords": [
+    "propale",
+    "revue",
+    "review",
+    "storytelling",
+    "coherence",
+    "pertinence"
+  ]
+}

@@ -22,6 +22,25 @@
         "propale",
         "projet"
       ]
+    },
+    {
+      "name": "propale-review-plugin",
+      "source": "./plugins/propale-review-plugin",
+      "description": "Revue indépendante d'une trame de proposition commerciale selon trois axes simultanés : storytelling, cohérence et pertinence.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Paulin B",
+        "email": "paulin.blattmann@orkester.fr"
+      },
+      "category": "PM",
+      "keywords": [
+        "propale",
+        "revue",
+        "review",
+        "storytelling",
+        "coherence",
+        "pertinence"
+      ]
     }
   ]
 }
