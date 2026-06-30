@@ -59,7 +59,7 @@ Chaque agent reçoit uniquement des **chemins de fichiers** — jamais de conten
   Chemin de la trame : [chemin-trame]
   [Si contexte disponible : Chemin du fichier contexte : [chemin-contexte]]
   ```
-- Cet agent lit la trame, produit son analyse dans un fichier temporaire `_revue-storytelling-[nom-projet].md` et retourne uniquement une confirmation avec le chemin de ce fichier.
+- Cet agent lit la trame, produit son analyse dans un fichier temporaire `tmp/_revue-storytelling-[nom-projet].md` et retourne uniquement une confirmation avec le chemin de ce fichier.
 
 ---
 
@@ -71,7 +71,7 @@ Chaque agent reçoit uniquement des **chemins de fichiers** — jamais de conten
   Chemin de la trame : [chemin-trame]
   [Si contexte disponible : Chemin du fichier contexte : [chemin-contexte]]
   ```
-- Cet agent lit la trame, produit son analyse dans un fichier temporaire `_revue-coherence-[nom-projet].md` et retourne uniquement une confirmation avec le chemin de ce fichier.
+- Cet agent lit la trame, produit son analyse dans un fichier temporaire `tmp/_revue-coherence-[nom-projet].md` et retourne uniquement une confirmation avec le chemin de ce fichier.
 
 ---
 
@@ -83,7 +83,7 @@ Chaque agent reçoit uniquement des **chemins de fichiers** — jamais de conten
   Chemin de la trame : [chemin-trame]
   [Si contexte disponible : Chemin du fichier contexte : [chemin-contexte]]
   ```
-- Cet agent lit la trame, produit son analyse dans un fichier temporaire `_revue-pertinence-[nom-projet].md` et retourne uniquement une confirmation avec le chemin de ce fichier.
+- Cet agent lit la trame, produit son analyse dans un fichier temporaire `tmp/_revue-pertinence-[nom-projet].md` et retourne uniquement une confirmation avec le chemin de ce fichier.
 
 ---
 
@@ -103,12 +103,12 @@ Lancer l'agent de synthèse avec les 3 chemins de fichiers temporaires :
   Chemin de l'analyse cohérence : [chemin retourné par l'agent 2]
   Chemin de l'analyse pertinence : [chemin retourné par l'agent 3]
   ```
-- Cet agent lit les 3 fichiers d'analyse, produit le rapport final `revue-[nom-projet].md` et retourne uniquement un résumé : scores des 3 axes, verdict global, chemin du fichier final. L'orchestrateur ne lit pas le fichier final.
+- Cet agent lit les 3 fichiers d'analyse, produit le rapport final `output/revue-[nom-projet].md` et retourne uniquement un résumé : scores des 3 axes, verdict global, chemin du fichier final. L'orchestrateur ne lit pas le fichier final.
 
 ### Phase 3 — Clôture
 
 Relayer à l'utilisateur le résumé reçu de l'agent de synthèse :
-- Le chemin du fichier final `revue-[nom-projet].md`.
+- Le chemin du fichier final `output/revue-[nom-projet].md`.
 - Les scores des 3 axes (storytelling / cohérence / pertinence).
 - Le verdict global en une phrase.
 

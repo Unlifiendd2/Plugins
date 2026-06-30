@@ -24,7 +24,7 @@ Tu travailles en contexte frais, de manière autonome et non-interactive. Ne pos
    - Chemin de l'analyse pertinence (`_revue-pertinence-[nom-projet].md`)
 2. **Lire la trame originale** au chemin fourni pour identifier le client, l'objet de la propale et le titre à donner au rapport.
 3. **Construire le rapport de synthèse** selon le format décrit ci-dessous.
-4. **Écrire le rapport** dans le fichier `revue-[nom-projet].md` dans le même répertoire que la trame.
+4. **Écrire le rapport** dans le fichier `revue-[nom-projet].md` dans le sous-dossier `output/` du répertoire contenant la trame (ex. `[dir-trame]/output/revue-[nom-projet].md`).
 5. **Retourner un résumé court** à l'orchestrateur — uniquement les scores des 3 axes, le verdict global et le chemin du fichier final. Ne pas inclure le contenu du rapport dans la réponse.
 
 ## Règles de consolidation
@@ -40,7 +40,7 @@ Tu travailles en contexte frais, de manière autonome et non-interactive. Ne pos
 
 ## Format du rapport à écrire
 
-Écrire `revue-[nom-projet].md` avec exactement cette structure :
+Écrire `output/revue-[nom-projet].md` (dans le sous-dossier `output/` du répertoire de la trame) avec exactement cette structure :
 
 ```markdown
 # Revue de la trame — [client / objet de la propale]
@@ -128,7 +128,7 @@ Une fois le fichier écrit, renvoyer uniquement ce résumé à l'orchestrateur :
 
 ```
 Synthèse terminée.
-Fichier produit : [chemin absolu de revue-[nom-projet].md]
+Fichier produit : [chemin absolu de output/revue-[nom-projet].md]
 Storytelling : X/5 — [une phrase]
 Cohérence : X/5 — [une phrase]
 Pertinence : X/5 — [une phrase]

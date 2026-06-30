@@ -19,7 +19,7 @@ Tu es l'agent `storytelling-reviewer`. Ta mission est d'analyser **uniquement l'
 1. **Lire la trame** au chemin fourni dans le prompt.
 2. **Lire le fichier contexte** au chemin fourni (s'il est indiqué) pour comprendre la qualification de la mission et le contexte deal.
 3. **Analyser le storytelling** selon les critères ci-dessous.
-4. **Écrire ton analyse** dans le fichier `_revue-storytelling-[nom-projet].md` dans le même répertoire que la trame. Ce fichier est un fichier de travail intermédiaire destiné à être lu par l'agent `synthesis-reviewer`.
+4. **Écrire ton analyse** dans le fichier `_revue-storytelling-[nom-projet].md` dans le sous-dossier `tmp/` du répertoire contenant la trame (ex. `[dir-trame]/tmp/_revue-storytelling-[nom-projet].md`). Ce fichier est un fichier de travail intermédiaire destiné à être lu par l'agent `synthesis-reviewer`.
 5. **Retourner une confirmation courte** comme message final — uniquement le statut et le chemin du fichier produit. Ne retourne pas le contenu de l'analyse dans ta réponse.
 
 ## Critères d'analyse du storytelling
@@ -105,7 +105,7 @@ Une fois le fichier écrit, renvoyer uniquement :
 
 ```
 Analyse storytelling terminée.
-Fichier produit : [chemin absolu du fichier _revue-storytelling-[nom-projet].md]
+Fichier produit : [chemin absolu du fichier tmp/_revue-storytelling-[nom-projet].md]
 ```
 
 Ne pas inclure l'analyse elle-même dans la réponse. L'agent `synthesis-reviewer` lira le fichier directement.

@@ -19,7 +19,7 @@ Tu es l'agent `pertinence-reviewer`. Ta mission est d'analyser **uniquement l'ax
 1. **Lire la trame** au chemin fourni dans le prompt.
 2. **Lire le fichier contexte** au chemin fourni (s'il est indiqué) — il est critique pour cet axe : il contient la qualification de la mission (type, produit, relation, contexte commercial), le profil client, les critères de décision, la concurrence éventuelle, les contraintes et les différenciateurs à valoriser. Si absent, déduire le contexte depuis la trame seule et le signaler dans les hypothèses.
 3. **Analyser la pertinence** selon les critères ci-dessous.
-4. **Écrire ton analyse** dans le fichier `_revue-pertinence-[nom-projet].md` dans le même répertoire que la trame. Ce fichier est un fichier de travail intermédiaire destiné à être lu par l'agent `synthesis-reviewer`.
+4. **Écrire ton analyse** dans le fichier `_revue-pertinence-[nom-projet].md` dans le sous-dossier `tmp/` du répertoire contenant la trame (ex. `[dir-trame]/tmp/_revue-pertinence-[nom-projet].md`). Ce fichier est un fichier de travail intermédiaire destiné à être lu par l'agent `synthesis-reviewer`.
 5. **Retourner une confirmation courte** comme message final — uniquement le statut et le chemin du fichier produit. Ne retourne pas le contenu de l'analyse dans ta réponse.
 
 ## Critères d'analyse de la pertinence
@@ -99,7 +99,7 @@ Une fois le fichier écrit, renvoyer uniquement :
 
 ```
 Analyse pertinence terminée.
-Fichier produit : [chemin absolu du fichier _revue-pertinence-[nom-projet].md]
+Fichier produit : [chemin absolu du fichier tmp/_revue-pertinence-[nom-projet].md]
 ```
 
 Ne pas inclure l'analyse elle-même dans la réponse. L'agent `synthesis-reviewer` lira le fichier directement.
