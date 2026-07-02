@@ -31,7 +31,7 @@ Les différentes parties ci-dessous présentent les outils disponibles.
 Chaque session de travail produit deux fichiers de référence dans l'espace de travail, lisibles par l'utilisateur et par les sous-agents :
 
 - **`contexte-{nom-projet}.md`** — créé par ce skill **au démarrage du workflow**, dès que le nom du projet ou le client est identifié, avant tout skill enfant. Centralise la qualification de la mission (4 axes), le contexte deal et la progression du workflow. **C'est le premier fichier à lire pour reprendre une session ou briefer un sous-agent.**
-- **`trame-{nom-projet}-V{n-version}.md`** — créé par `propale-base-creator`. Contient uniquement la trame (sections ordonnées, statuts, objectifs, consignes « À rédiger »).
+- **`output/trame-{nom-projet}-V{n-version}.md`** — créé par `propale-base-creator`. Contient uniquement la trame (sections ordonnées, statuts, objectifs, consignes « À rédiger »).
 
 ### Reprendre une session
 
@@ -72,14 +72,14 @@ Chaque outil est indépendant. Ne jamais en déclencher un sans que l'utilisateu
 ### Création de trame sur mesure — `propale-base-creator`
 
 Ce skill contient un catalogue des sections types tirées des précédentes propales Orkester, en décrivant leur raison d'être (objectif) et dans quel contexte elles sont généralement incluses. En se basant sur le contexte projet spécifique, il déduit les 4 axes qui qualifient la mission, et il propose à l'utilisateur une trame structurée et ordonnée pour la propale.  
-A déclencher au travers du sous-agent `skill-executor` pour bénéficier d'un contexte frais. Lui fournir le chemin du fichier `contexte-{nom-projet}.md` qui centralise la qualification de la mission et le contexte deal. Produit deux sorties : met à jour la section `## Qualification de la mission` du fichier `contexte-{nom-projet}.md` avec les 4 axes confirmés, puis génère un fichier `trame-{nom-projet}-V{n-version}.md` contenant uniquement la trame (sans bloc de qualification).
+A déclencher au travers du sous-agent `skill-executor` pour bénéficier d'un contexte frais. Lui fournir le chemin du fichier `contexte-{nom-projet}.md` qui centralise la qualification de la mission et le contexte deal. Produit deux sorties : met à jour la section `## Qualification de la mission` du fichier `contexte-{nom-projet}.md` avec les 4 axes confirmés, puis génère un fichier `output/trame-{nom-projet}-V{n-version}.md` contenant uniquement la trame (sans bloc de qualification).
 
 ### Revue de trame — `base-reviewer`
 
 Ce skill passe en revue la cohérence et la pertinence d'une trame, avec une emphase sur le storytelling.  
-A déclencher au travers du sous-agent `skill-executor` pour bénéficier d'un contexte frais et éliminer les potentiels biais. Lui fournir les chemins du fichier `contexte-{nom-projet}.md` (qualification des 4 axes + contexte deal) et du fichier trame `trame-{nom-projet}-V{n}.md`.
+A déclencher au travers du sous-agent `skill-executor` pour bénéficier d'un contexte frais et éliminer les potentiels biais. Lui fournir les chemins du fichier `contexte-{nom-projet}.md` (qualification des 4 axes + contexte deal) et du fichier trame `output/trame-{nom-projet}-V{n}.md`.
 
 ### Rédaction des parties du bloc B — `identity-creator`
 
 Ce skill rédige les parties du bloc B à la demande (1 ou plusieurs) en respectant un guide de rédaction.  
-A déclencher au travers du sous-agent `skill-executor`. Lui fournir les chemins du fichier `contexte-{nom-projet}.md` (qualification des 4 axes + contexte deal) et du fichier trame retenue `trame-{nom-projet}-V{n}.md`.
+A déclencher au travers du sous-agent `skill-executor`. Lui fournir les chemins du fichier `contexte-{nom-projet}.md` (qualification des 4 axes + contexte deal) et du fichier trame retenue `output/trame-{nom-projet}-V{n}.md`.

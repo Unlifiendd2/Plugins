@@ -28,7 +28,7 @@ Sections couvertes : **B1** (qui sommes-nous), **B2** (proposition de valeur / A
 
 Avant de rédiger, lire les deux fichiers fournis par l'agent invocateur. S'ils sont absents, renvoyer un message indiquant ce qui manque.
 
-1. **`trame-{nom-projet}-V{n}.md`** — le plan. Pour chaque section identité : son **statut** et ses consignes **« À rédiger »** (instructions fermes, pas des suggestions). Le fil rouge / promesse-signature y est défini s'il existe — il prime sur tout. La **position de chaque section** est déduite de l'ordre du plan (numéro, sections précédentes et suivantes) ; voir « Lire la position » plus bas.
+1. **`output/trame-{nom-projet}-V{n}.md`** — le plan. Pour chaque section identité : son **statut** et ses consignes **« À rédiger »** (instructions fermes, pas des suggestions). Le fil rouge / promesse-signature y est défini s'il existe — il prime sur tout. La **position de chaque section** est déduite de l'ordre du plan (numéro, sections précédentes et suivantes) ; voir « Lire la position » plus bas.
 2. **`contexte-{nom-projet}.md`** — contient les 4 axes de qualification (BUILD/RUN ; ECOM_B2B / ECOM_B2C / APP_MOBILE ; NOUVEAU_CLIENT / CLIENT_EXISTANT ; APPEL_OFFRES / ECHANGE_DIRECT), le nom et le secteur du client, les différenciateurs, et tout élément deal utile. Les axes pilotent le filtrage du contenu (cf. référence).
 
 ## Principe de sourcing : hybride, KB d'abord, jamais inventer
@@ -84,7 +84,7 @@ Pour chaque section demandée :
 ```
 
 Rendre le contenu directement réutilisable : pas de méta-commentaire dans la prose elle-même, tout le commentaire va dans les « Notes de rédaction ».  
-A produire dans un fichier `bloc-b-identité-{nom-projet}-V{n-version}.md`.
+A produire dans un fichier `output/bloc-b-identité-{nom-projet}-V{n-version}.md`.
 
 ## Pièges à éviter
 

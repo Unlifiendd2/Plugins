@@ -20,7 +20,7 @@ Conséquences sur le comportement :
 
 Les entrées sont fournies via les chemins de deux fichiers de l'espace de travail :
 
-1. **`trame-{nom-projet}-V{n}.md`** — la trame à analyser (sections ordonnées + objectifs + consignes « À rédiger »).
+1. **`output/trame-{nom-projet}-V{n}.md`** — la trame à analyser (sections ordonnées + objectifs + consignes « À rédiger »).
 2. **`contexte-{nom-projet}.md`** — contient la qualification de la mission (4 axes : type `BUILD`/`RUN`, nature du produit, relation client, contexte commercial) et le contexte deal (client, secteur, objectif, critères de décision, concurrence, historique, différenciateurs, contraintes, fil rouge).
 
 Si un fichier est absent ou incomplet, déduire ce qui manque de l'autre et le signaler dans la section « Hypothèses ».
@@ -70,7 +70,7 @@ Par défaut, juger sur les entrées fournies. Recourir aux outils MCP `Orkester-
 
 ## Format de sortie
 
-Restituer la revue dans cette structure dans un fichier `revue-trame-{nom-projet}-V{n-version}.md` :
+Restituer la revue dans cette structure dans un fichier `output/revue-trame-{nom-projet}-V{n-version}.md` :
 
 ```
 # Revue de la trame — <client / objet>

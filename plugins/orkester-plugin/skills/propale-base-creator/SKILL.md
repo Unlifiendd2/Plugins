@@ -59,7 +59,7 @@ Deux actions dans cet ordre :
 **1. Mettre à jour `contexte-{nom-projet}.md`**  
 Renseigner la section `## Qualification de la mission` avec les 4 axes confirmés, et cocher la case `Trame créée` dans la `## Progression`.
 
-**2. Générer `trame-{nom-projet}-V{n-version}.md`**  
+**2. Générer `output/trame-{nom-projet}-V{n-version}.md`**  
 Ce fichier contient uniquement la trame — la qualification vit dans le fichier contexte. Restituer dans ce format :
 
 ```
