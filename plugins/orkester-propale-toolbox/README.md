@@ -29,8 +29,12 @@ orkester-propale-toolbox/
 ├── .claude-plugin/
 │   └── plugin.json               # Manifeste du plugin
 ├── skills/
-│   └── propale-toolbox/
-│       └── SKILL.md              # Point d'entrée : orchestrateur de session
+│   ├── propale-toolbox/
+│   │   └── SKILL.md              # Point d'entrée : orchestrateur de session
+│   └── outline-generator/
+│       ├── SKILL.md              # Création de trame → output/trame-{projet}-V{n}.md
+│       └── references/
+│           └── catalogue-sections.md  # Catalogue des ~35 sections types (A à H)
 ├── agents/
 │   ├── skill-executor.md         # Exécution de skills en contexte frais
 │   └── trame-reviewer.md         # Revue de trame 3 lentilles → output/revue-{projet}.md
@@ -40,6 +44,6 @@ orkester-propale-toolbox/
 ## Feuille de route
 
 - [x] Skill point d'entrée `propale-toolbox` (orchestration, sessions, initialisation)
+- [x] Création de trame sur mesure — skill `outline-generator` (via `skill-executor`)
 - [x] Revue de trame 3 lentilles (storytelling, cohérence, pertinence) — agent `trame-reviewer`
-- [ ] Création de trame sur mesure
 - [ ] Rédaction de sections

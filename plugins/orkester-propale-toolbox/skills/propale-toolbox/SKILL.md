@@ -125,9 +125,18 @@ Si un sous-agent remonte un blocage (information clé manquante), poser la quest
 
 ## Outils disponibles
 
-La boîte à outils se remplit progressivement ; chaque outil ajouté au plugin est documenté ici (quoi, quand, quel mécanisme d'invocation, quelles entrées, quelles sorties). Outils prévus : création de trame sur mesure, rédaction de sections.
+La boîte à outils se remplit progressivement ; chaque outil ajouté au plugin est documenté ici (quoi, quand, quel mécanisme d'invocation, quelles entrées, quelles sorties). Outils prévus : rédaction de sections.
 
 Si l'utilisateur demande une tâche non couverte, la déléguer à un sous-agent générique avec un prompt complet, en respectant les règles de délégation ci-dessus.
+
+### Création de trame sur mesure — skill `outline-generator`
+
+Construit la trame ordonnée et justifiée de la propale à partir de la qualification de la mission (4 axes) et du catalogue des sections types des propales gagnées. Le livrable est un plan à remplir (objectif + consignes « À rédiger » contextualisées par section), pas une propale rédigée. À proposer une fois le contexte initialisé, quand l'utilisateur veut structurer sa propale.
+
+- **Mécanisme** : skill via `skill-executor` (le skill s'appuie sur `references/catalogue-sections.md`) — un seul appel Agent vers `skill-executor` en lui indiquant le skill `outline-generator`.
+- **Entrées à passer** (chemins uniquement) : chemin de `contexte-{projet}.md`, racine de l'espace de travail, nom du projet.
+- **Sorties** : `output/trame-{projet}-V{n}.md` (versionné, jamais écrasé) ; `## Progression` mise à jour.
+- **Retour** : un résumé court (sections retenues/écartées, hypothèses posées, chemin du fichier) — le relayer tel quel. Si l'agent remonte un blocage (axe 1 ou 4 indéductible), poser la question à l'utilisateur et relancer.
 
 ### Revue de trame — agent `trame-reviewer`
 
