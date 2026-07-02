@@ -33,17 +33,13 @@ orkester-propale-toolbox/
 │       └── SKILL.md              # Point d'entrée : orchestrateur de session
 ├── agents/
 │   ├── skill-executor.md         # Exécution de skills en contexte frais
-│   ├── trame-reviewer.md         # Orchestrateur de la revue multi-axes (3 + 1 agents)
-│   ├── storytelling-reviewer.md  # Axe storytelling → output/tmp/
-│   ├── coherence-reviewer.md     # Axe cohérence → output/tmp/
-│   ├── pertinence-reviewer.md    # Axe pertinence → output/tmp/
-│   └── synthesis-reviewer.md     # Consolidation → output/revue-{projet}.md
+│   └── trame-reviewer.md         # Revue de trame 3 lentilles → output/revue-{projet}.md
 └── README.md                     # Ce fichier
 ```
 
 ## Feuille de route
 
 - [x] Skill point d'entrée `propale-toolbox` (orchestration, sessions, initialisation)
-- [x] Revue multi-axes indépendante (storytelling, cohérence, pertinence) — agent `trame-reviewer`
+- [x] Revue de trame 3 lentilles (storytelling, cohérence, pertinence) — agent `trame-reviewer`
 - [ ] Création de trame sur mesure
 - [ ] Rédaction de sections

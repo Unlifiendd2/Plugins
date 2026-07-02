@@ -129,14 +129,14 @@ La boîte à outils se remplit progressivement ; chaque outil ajouté au plugin 
 
 Si l'utilisateur demande une tâche non couverte, la déléguer à un sous-agent générique avec un prompt complet, en respectant les règles de délégation ci-dessus.
 
-### Revue de trame multi-axes — agent `trame-reviewer`
+### Revue de trame — agent `trame-reviewer`
 
-Revue critique indépendante d'une trame de propale selon 3 axes simultanés (storytelling, cohérence, pertinence) : 3 sous-agents de revue en parallèle + 1 agent de synthèse qui consolide le rapport final. À proposer quand une trame existe dans `output/` et que l'utilisateur demande une revue, un audit, un challenge de sa trame.
+Revue critique indépendante d'une trame de propale selon 3 lentilles d'analyse (storytelling, cohérence, pertinence), menée par un seul agent qui produit directement le rapport final. À proposer quand une trame existe dans `output/` et que l'utilisateur demande une revue, un audit, un challenge de sa trame.
 
-- **Mécanisme** : agent dédié — un **seul appel Agent** vers `trame-reviewer` (`${CLAUDE_PLUGIN_ROOT}/agents/trame-reviewer.md`), qui orchestre lui-même ses 4 sous-agents en contexte frais. Ne pas lancer les agents de revue individuellement depuis le fil principal.
+- **Mécanisme** : agent dédié — un **seul appel Agent** vers `trame-reviewer` (`${CLAUDE_PLUGIN_ROOT}/agents/trame-reviewer.md`).
 - **Entrées à passer** (chemins uniquement) : chemin de la trame (`output/trame-{projet}-V{n}.md`), racine de l'espace de travail, chemin de `contexte-{projet}.md`, nom du projet.
-- **Sorties** : rapport final `output/revue-{projet}.md` ; analyses intermédiaires dans `output/tmp/` ; `## Progression` mise à jour par l'agent de synthèse.
-- **Retour** : un résumé court (scores des 3 axes, verdict global, chemin du rapport) — le relayer tel quel à l'utilisateur.
+- **Sorties** : rapport final `output/revue-{projet}.md` ; `## Progression` du contexte mise à jour.
+- **Retour** : un résumé court (scores des 3 lentilles, verdict global, chemin du rapport) — le relayer tel quel à l'utilisateur.
 
 ## Fin de session
 
