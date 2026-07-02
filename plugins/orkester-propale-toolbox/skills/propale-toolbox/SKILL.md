@@ -20,15 +20,19 @@ Ce skill s'exécute **directement dans le fil de discussion principal**. Il est 
 
 L'objectif est un fil de discussion principal **le plus propre et court possible, sans perte d'information** : tout ce qui produit ou consomme du contenu volumineux est délégué à un sous-agent en contexte frais.
 
-## Règle fondamentale — l'orchestrateur ne touche jamais aux fichiers bruts
+## Gestion des fichiers — production déléguée, lecture avec parcimonie
 
-Cette règle est absolue, avec une seule exception (l'initialisation, décrite plus bas) :
+Le fonctionnement par défaut :
 
-- Il ne lit pas les fichiers sources, les fichiers produits, ni les fichiers temporaires.
-- Il n'écrit et ne modifie aucun fichier de l'espace de travail.
-- Il ne manipule que des **chemins de fichiers** : il les reçoit, les transmet aux sous-agents, les récupère dans leurs confirmations.
-- Les sous-agents qui créent ou modifient des fichiers retournent un **résumé court** de leur travail (statut, chemins produits, points saillants) — c'est ce résumé qui est relayé à l'utilisateur, jamais le contenu des fichiers.
-- La seule opération autorisée sur le système de fichiers en cours de session est **lister l'espace de travail** (noms, tailles, dates) pour vérifier l'état, lever une ambiguïté sur un chemin, ou confirmer qu'un sous-agent a bien produit ce qu'il annonce.
+- La création et la modification des fichiers de travail sont **toujours déléguées aux sous-agents**. Le fil principal n'écrit jamais de fichier de travail lui-même — seule la création de `contexte-{projet}.md` à l'initialisation lui revient.
+- Les sous-agents retournent un **résumé court** de leur travail (statut, chemins produits, points saillants) — c'est ce résumé qui est relayé à l'utilisateur. Le fil principal n'a pas besoin de lire les fichiers produits pour en rendre compte.
+- **Lister l'espace de travail** (noms, tailles, dates) est toujours permis : vérifier l'état, lever une ambiguïté sur un chemin, confirmer qu'un sous-agent a bien produit ce qu'il annonce.
+
+La lecture directe reste possible quand elle est utile : si un échange avec l'utilisateur nécessite des informations contenues dans les fichiers produits (répondre à une question précise, comparer des points entre versions, citer un passage), le fil principal peut les lire. C'est un outil de conversation, pas de production — ne charger dans le fil que ce dont la discussion a réellement besoin.
+
+### Sécurité de taille — la seule règle stricte
+
+Avant de lire des fichiers fournis par l'utilisateur, toujours vérifier leur taille via un listing. Estimation : 1 page ≈ 3 000 caractères ≈ 3 Ko de texte brut, soit un seuil de **100 pages cumulées ≈ 300 Ko**. Au-delà du seuil — ou si l'estimation est peu fiable (formats binaires : PDF, DOCX, XLSX…) — ne pas les lire : invoquer un sous-agent générique chargé d'en produire un **résumé structuré et précis** (client, contexte, périmètre, contraintes, critères de décision, chiffres clés), retourné dans son message final, et travailler à partir de ce résumé.
 
 ## Structure de l'espace de travail
 
@@ -48,7 +52,7 @@ Cette règle est absolue, avec une seule exception (l'initialisation, décrite p
 
 Les dossiers sont créés par les sous-agents au moment où ils en ont besoin ; l'orchestrateur ne les crée pas lui-même.
 
-## Initialisation — la seule exception
+## Initialisation
 
 Au début de la conversation (premier lancement du skill), procéder ainsi :
 
@@ -58,20 +62,18 @@ Lister la racine du dossier de travail (noms + tailles). Ne rien ouvrir à ce st
 
 ### 2a. Un fichier `contexte-{projet}.md` existe → reprise de session
 
-Le lire **directement** (lecture directe autorisée uniquement pour ce fichier, uniquement à l'initialisation). Puis lister `output/` et `artifact/` pour croiser la section `## Progression` avec les fichiers réellement présents. Résumer à l'utilisateur l'état de la session (contexte, avancement, derniers livrables) et présenter les outils pertinents pour la suite. Ne rien relancer automatiquement.
+Le lire directement. Puis lister `output/` et `artifact/` pour croiser la section `## Progression` avec les fichiers réellement présents. Résumer à l'utilisateur l'état de la session (contexte, avancement, derniers livrables) et présenter les outils pertinents pour la suite. Ne rien relancer automatiquement.
 
 C'est le mécanisme de session du plugin : **tout travail peut être repris depuis une conversation vierge à partir du seul fichier de contexte et des fichiers produits.**
 
 ### 2b. Pas de fichier de contexte → première session
 
-1. **Évaluer la taille des fichiers sources** ajoutés par l'utilisateur à la racine, avant toute lecture. Estimation : 1 page ≈ 3 000 caractères ≈ 3 Ko de texte brut, soit un seuil de **100 pages cumulées ≈ 300 Ko de texte**.
-   - **Sous le seuil** : lire les fichiers directement.
-   - **Au-dessus du seuil** — ou si l'estimation est peu fiable (formats binaires : PDF, DOCX, XLSX…) : ne pas les lire. Lancer un sous-agent (agent générique, en lui passant les chemins) chargé de produire un **résumé structuré et précis** des fichiers : client, contexte, périmètre, contraintes, critères de décision, chiffres clés, et toute information nécessaire au fichier de contexte. Le sous-agent retourne ce résumé dans son message final ; travailler ensuite à partir de ce résumé.
+1. **Lire les fichiers sources** ajoutés par l'utilisateur à la racine, en appliquant la **sécurité de taille** décrite plus haut : sous le seuil, lecture directe ; au-dessus (ou format binaire), résumé structuré délégué à un sous-agent générique.
 2. **Poser des questions courtes et groupées** pour combler ce que les fichiers ne disent pas (client, type de mission, contexte commercial, contraintes, différenciateurs). Ne pas tout demander d'un coup si l'essentiel permet déjà de démarrer. L'initialisation est le moment d'investir dans la qualité du contexte : ces échanges rendront tout le fil de discussion suivant plus pertinent.
-3. **Créer `contexte-{projet}.md` à la racine** (écriture directe autorisée uniquement ici) selon le format ci-dessous. Les champs inconnus restent marqués `À compléter`.
+3. **Créer `contexte-{projet}.md` à la racine** selon le format ci-dessous — c'est le seul fichier que le fil principal écrit lui-même. Les champs inconnus restent marqués `À compléter`.
 4. **Présenter les outils disponibles** et demander lequel lancer.
 
-Après l'initialisation, l'exception est close : plus aucune lecture ni écriture directe, y compris sur le fichier de contexte — ses mises à jour passent par les sous-agents.
+Les mises à jour ultérieures du fichier de contexte (progression, enrichissements) sont le fait des sous-agents, au fil de leurs tâches.
 
 ## Format du fichier `contexte-{projet}.md`
 
@@ -115,7 +117,7 @@ Règles communes d'invocation :
 
 1. Transmettre des **chemins**, jamais du contenu collé — au minimum le chemin de `contexte-{projet}.md`, plus les chemins des fichiers d'entrée pertinents.
 2. Le sous-agent écrit ses fichiers aux bons emplacements (`output/tmp/`, `output/`, `artifact/`), met à jour la section `## Progression` du fichier de contexte, et retourne un résumé court (statut, chemins produits, points saillants, hypothèses posées).
-3. Relayer ce résumé à l'utilisateur tel quel, sans le reformuler depuis les fichiers — l'orchestrateur ne les a pas lus et ne peut pas les commenter. Vérifier au besoin la présence des fichiers annoncés en listant l'espace de travail.
+3. Relayer ce résumé à l'utilisateur tel quel. Vérifier au besoin la présence des fichiers annoncés en listant l'espace de travail ; ne lire les fichiers produits que si un échange avec l'utilisateur nécessite des informations qu'ils contiennent.
 4. Des tâches indépendantes peuvent être lancées en parallèle (plusieurs appels Agent dans un même message).
 5. Ne jamais enchaîner automatiquement sur un outil suivant : présenter le résultat, suggérer la suite pertinente, attendre la demande de l'utilisateur.
 

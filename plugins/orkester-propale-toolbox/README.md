@@ -1,13 +1,14 @@
 # orkester-propale-toolbox
 
-Boîte à outils Orkester pour la construction de propositions commerciales (propales). Reprend le meilleur d'`orkester-plugin` et de `propale-review-plugin` autour d'un principe central : un **orchestrateur** dans le fil de discussion principal qui ne touche jamais aux fichiers bruts, et des **sous-agents en contexte frais** qui produisent les fichiers et ne retournent que des résumés.
+Boîte à outils Orkester pour la construction de propositions commerciales (propales). Reprend le meilleur d'`orkester-plugin` et de `propale-review-plugin` autour d'un principe central : un **orchestrateur** dans le fil de discussion principal qui délègue la production des fichiers à des **sous-agents en contexte frais**, lesquels ne retournent que des résumés.
 
 ## Principes
 
-- **Fil principal minimal** — l'orchestrateur `propale-toolbox` manipule des chemins, jamais du contenu. Tout travail de fond est délégué à des sous-agents.
+- **Fil principal minimal** — l'orchestrateur `propale-toolbox` délègue toute production de fichiers aux sous-agents et relaie leurs résumés. Il ne lit les fichiers produits que quand un échange avec l'utilisateur nécessite des informations qu'ils contiennent.
 - **Système de session** — le fichier `contexte-{projet}.md` à la racine de l'espace de travail est la source de vérité. Une session peut être reprise depuis une conversation vierge à partir de ce seul fichier et des fichiers produits.
-- **Exception d'initialisation** — au premier lancement uniquement, l'orchestrateur lit le fichier de contexte s'il existe, ou lit les fichiers sources (avec garde-fou de taille : au-delà de ~100 pages cumulées, un sous-agent produit le résumé) et crée le fichier de contexte.
+- **Sécurité de taille** — avant de lire des fichiers fournis par l'utilisateur, vérification de leur taille : au-delà de ~100 pages cumulées (ou format binaire), un sous-agent générique produit un résumé structuré à la place.
 - **Deux mécanismes de délégation** — agent dédié pour le cas général ; `skill-executor` uniquement quand la tâche a besoin de la structure d'un skill (références, scripts, assets).
+- **Accès à Orkester-kb** — tous les agents du plugin ont accès via MCP à la base vectorielle des propales gagnées d'Orkester, pour ancrer leur travail dans les pratiques qui ont fait leurs preuves.
 
 ## Structure de l'espace de travail
 
