@@ -2,11 +2,12 @@
 name: outline-generator
 description: >-
   Construit la trame sur-mesure d'une proposition commerciale (propale) Orkester à partir de la
-  qualification de la mission (4 axes) du fichier contexte : sélectionne et ordonne les sections
-  à inclure depuis le catalogue de référence, en donnant pour chacune son objectif et des
-  consignes de rédaction contextualisées. Produit output/trame-{nom-projet}-V{n}.md. À exécuter
-  exclusivement à travers l'agent skill-executor, en lui fournissant le chemin du fichier
-  contexte-{projet}.md et la racine de l'espace de travail.
+  qualification de la mission (4 axes) du fichier contexte : sélectionne les sections pertinentes
+  depuis le catalogue de référence et les rassemble en groupes ordonnés autour d'un fil rouge
+  explicite, chaque groupe décrit par son contenu et son objectif. Produit une trame courte et
+  synthétique output/trame-{nom-projet}-V{n}.md. À exécuter exclusivement à travers l'agent
+  skill-executor, en lui fournissant le chemin du fichier contexte-{projet}.md et la racine de
+  l'espace de travail.
 ---
 
 # Trame de proposition commerciale Orkester
@@ -15,7 +16,7 @@ description: >-
 
 Orkester gagne ses propales en réutilisant un socle de sections récurrentes, mais **toutes les sections n'ont pas leur place dans toutes les propales** : une réponse à appel d'offres pour un nouveau client n'a pas la même structure qu'une offre de TMA pour un client historique. Inclure une section inutile dilue le message ; en oublier une attendue (réversibilité en AO, SLA en TMA, RGPD en B2B…) coûte des points.
 
-Ce skill produit une **trame ordonnée et justifiée** : la liste des sections à inclure, dans le bon ordre, chacune accompagnée de son objectif et de consignes de rédaction adaptées au cas précis. Il met l'emphase sur une trame qui raconte une histoire autour du client (storytelling customer-centric). Le livrable est un **plan à remplir**, pas une propale rédigée. Il s'appuie sur le catalogue de référence `references/catalogue-sections.md`, qui décrit chaque section, sa raison d'être et sa condition d'inclusion.
+Ce skill produit une **trame courte et synthétique** : les sections retenues, rassemblées en groupes ordonnés qui racontent une histoire autour du client (storytelling customer-centric), le tout porté par un **fil rouge explicite**. Chaque groupe est décrit en quelques phrases — son contenu et son objectif dans le récit — sans entrer dans des consignes de rédaction détaillées. Le livrable est un **plan de lecture**, pas une propale rédigée. Il s'appuie sur le catalogue de référence `references/catalogue-sections.md`, qui décrit chaque section, sa raison d'être et sa condition d'inclusion.
 
 Ce skill s'exécute en contexte frais et non-interactif : toutes les informations projet viennent du fichier `contexte-{projet}.md` fourni dans le prompt d'invocation.
 
@@ -49,35 +50,41 @@ Pour chaque section du catalogue, évaluer sa condition d'inclusion au regard de
   - `ECOM_B2B` / grand compte / données sensibles → activer H1 (RGPD/sécurité).
   - Axe 2 → filtrer B4 (technos pertinentes), B7 et H2 (références du bon univers : mobilité vs e-commerce).
 
-En cas de doute sur une section, préférer **Recommandée** (avec une note) plutôt que de la supprimer silencieusement : c'est à l'utilisateur de trancher à la lecture de la trame.
+En cas de doute sur une section, préférer l'inclure dans son groupe en la signalant comme optionnelle dans la description, plutôt que de la supprimer silencieusement : c'est à l'utilisateur de trancher à la lecture de la trame.
 
-## Étape 4 — Ordonner
+## Étape 4 — Définir le fil rouge, regrouper et ordonner
 
-Proposer un ordre basé sur un fil rouge qui porte tout le document autour d'une histoire centrée sur le client dans laquelle il peut s'identifier. Ouvrir le récit dans le monde du client avant de parler de Orkester. S'appuyer sur le contexte deal du fichier contexte (fil rouge / promesse-signature, différenciateurs) quand il est renseigné.
+**Définir le fil rouge** : l'idée-force / promesse-signature qui traverse toute la propale et autour de laquelle le récit s'organise. S'appuyer sur le contexte deal du fichier contexte (fil rouge / promesse-signature, différenciateurs) quand il est renseigné ; sinon le formuler depuis les enjeux du client et le signaler comme hypothèse.
 
-Deux ajustements utiles :
-- Si `CLIENT_EXISTANT`, placer B5/B6 juste après le sommaire (avant la compréhension de la mission) pour capitaliser d'emblée sur la relation.
-- Les sections de réassurance lourdes d'un `BUILD`/`APPEL_OFFRES` (E5 réversibilité, E6 risques, H1 RGPD, F4 outils) se placent volontiers en fin de corps ou en annexe, pour ne pas casser le fil de l'offre.
+**Regrouper** : rassembler les sections retenues en **groupes cohérents, le moins de groupes possible** (typiquement 5 à 8), chaque groupe portant une étape du récit (ex. « Votre enjeu, notre compréhension », « La vision produit », « Comment nous fabriquons », « Pourquoi nous faire confiance », « Cadre de la mission »…). Une section = un élément d'un groupe, jamais une entrée isolée de la trame, sauf si rien ne peut lui être rattaché.
+
+**Ordonner** les groupes selon un récit centré sur le client, dans lequel il peut s'identifier : ouvrir dans le monde du client avant de parler d'Orkester. Deux ajustements utiles :
+- Si `CLIENT_EXISTANT`, remonter l'historique de la relation (B5/B6) en tête de récit pour capitaliser d'emblée sur la relation.
+- Les sections de réassurance lourdes d'un `BUILD`/`APPEL_OFFRES` (réversibilité, risques, RGPD, outils) se rassemblent volontiers dans un groupe de fin de corps ou en annexe, pour ne pas casser le fil de l'offre.
 
 ## Étape 5 — Produire la sortie
 
 Générer `output/trame-{nom-projet}-V{n}.md` dans la racine de l'espace de travail (créer le dossier `output/` s'il n'existe pas). Pour le numéro de version `{n}`, lister les fichiers `output/trame-{nom-projet}-V*.md` existants et prendre le numéro suivant (V1 s'il n'y en a aucun — ne jamais écraser une version existante).
 
-Ce fichier contient uniquement la trame — la qualification vit dans le fichier contexte. Restituer dans ce format :
+Ce fichier contient uniquement la trame — la qualification vit dans le fichier contexte. La sortie est **courte et synthétique** : pas de codes de section, pas de consignes « À rédiger » détaillées. Restituer dans ce format :
 
 ```
-## Trame proposée — {nom-projet} V{n}
+# Trame proposée — {nom-projet} V{n}
 
-1. [Code] Titre de la section — *Statut : Obligatoire|Recommandée*
-   - Objectif : <une phrase, tirée du catalogue>
-   - À rédiger : <2 à 4 puces concrètes, adaptées à CE client / contexte (pas génériques)>
-2. ...
+**Fil rouge :** <la promesse-signature en une phrase, qui traverse tous les groupes>
 
-## Sections écartées (et pourquoi)
-- [Code] Titre — <raison courte liée aux axes>
+## 1. <Titre du groupe>
+*Objectif : <une phrase — ce que ce groupe doit produire chez le lecteur : convaincre, rassurer, projeter, prouver…>*
+
+<2 à 3 phrases concises sur le contenu du groupe : les sections qu'il rassemble et les points clés à couvrir, contextualisés pour CE client (nom, produit, secteur, solution quand ils sont connus). Signaler ici les éléments optionnels.>
+
+## 2. ...
+
+## Sections écartées
+- <Titre> — <raison courte liée aux axes>
 ```
 
-Les consignes « À rédiger » doivent être **spécifiques** au cas : citer le nom du client, le produit, la solution technique, le secteur quand ils sont connus. Une consigne générique (« présenter l'équipe ») apporte peu ; une consigne contextualisée (« présenter l'équipe mobile Flutter et son expérience parfumerie/cosmétique ») guide vraiment la rédaction.
+Les descriptions de groupes doivent rester **spécifiques** au cas — citer le client, le produit, le secteur — mais tenir en 2-3 phrases : la trame entière doit se lire d'un coup d'œil.
 
 ## Quand consulter la base orkester-kb
 

@@ -131,7 +131,7 @@ Si l'utilisateur demande une tâche non couverte, la déléguer à un sous-agent
 
 ### Création de trame sur mesure — skill `outline-generator`
 
-Construit la trame ordonnée et justifiée de la propale à partir de la qualification de la mission (4 axes) et du catalogue des sections types des propales gagnées. Le livrable est un plan à remplir (objectif + consignes « À rédiger » contextualisées par section), pas une propale rédigée. À proposer une fois le contexte initialisé, quand l'utilisateur veut structurer sa propale.
+Construit la trame de la propale à partir de la qualification de la mission (4 axes) et du catalogue des sections types des propales gagnées. Le livrable est une trame courte et synthétique : un fil rouge explicite et des groupes de sections ordonnés, chacun décrit par son objectif et 2-3 phrases de contenu contextualisé. À proposer une fois le contexte initialisé, quand l'utilisateur veut structurer sa propale.
 
 - **Mécanisme** : skill via `skill-executor` (le skill s'appuie sur `references/catalogue-sections.md`) — un seul appel Agent vers `skill-executor` en lui indiquant le skill `outline-generator`.
 - **Entrées à passer** (chemins uniquement) : chemin de `contexte-{projet}.md`, racine de l'espace de travail, nom du projet.

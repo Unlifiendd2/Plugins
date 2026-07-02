@@ -63,7 +63,7 @@ Vérifier la logique interne de la trame, indépendamment du contexte client sp�
 - **Ordre logique** — l'enchaînement suit-il une progression lisible ? Les réagencements sont-ils justifiés ? Signaler tout ordre contre-intuitif.
 - **Redondances** — deux sections ou plus disent-elles essentiellement la même chose ? Proposer fusion ou suppression.
 - **Trous structurels** — promesse posée sans preuve ; enjeu soulevé sans réponse ; chiffrage sans périmètre explicite.
-- **Statuts des sections** — les statuts (Obligatoire / Recommandé / Optionnel) sont-ils cohérents avec les axes de la mission ? Une section « Optionnelle » mais critique pour ce contexte est un risque.
+- **Éléments optionnels** — les éléments signalés comme optionnels dans les groupes sont-ils cohérents avec les axes de la mission ? Un élément marqué optionnel mais critique pour ce contexte est un risque.
 
 ## Lentille 3 — Pertinence contextuelle
 
@@ -71,7 +71,7 @@ Confronter la trame au contexte client réel. Noter l'adéquation à ce client s
 
 - **Chaque section gagne-t-elle sa place ?** — identifier les « passagers clandestins » présents par habitude : « qui sommes-nous » très développé devant un client qui connaît l'agence, section RSE sans rapport avec le contexte, équipe globale pour une prestation ciblée.
 - **Sections manquantes exigées par le contexte** — RGPD/sécurité (B2B, grand compte, AO public, secteur réglementé) ; réversibilité (AO, contrat long terme) ; SLA (mission RUN/TMA) ; historique de collaboration (client existant) ; gestion des risques (AO à fort enjeu, premier projet) ; conformité/certifications (secteur exigeant).
-- **Consignes « À rédiger » trop génériques** — une consigne contextualisée guide la rédaction (« Présenter l'équipe Flutter (3 personnes), expérience secteur cosmétique, référence [client comparable] ») ; une consigne générique ne sert à rien (« Présenter l'équipe projet »). Lister chaque consigne trop générique et proposer une version améliorée.
+- **Descriptions de groupes trop génériques** — la description d'un groupe doit être contextualisée pour ce client (« L'équipe Flutter et son expérience cosmétique, avec la référence [client comparable] ») ; une description générique ne guide rien (« Présenter l'équipe projet »). Lister chaque description trop générique et proposer une version améliorée.
 - **Adéquation aux critères de décision du client** — délai → planning visible ; sécurité → garanties explicites ; expérience sectorielle → références mises en avant ; prix → transparence du chiffrage argumentée.
 - **Calibrage de la profondeur** — sections survolées qui méritent plus (gouvernance légère sur un grand compte) ; sections hypertrophiées au regard de l'enjeu (présentation générale très longue pour un client qui connaît l'agence).
 
