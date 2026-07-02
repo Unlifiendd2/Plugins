@@ -131,11 +131,19 @@ Si l'utilisateur demande une tâche non couverte, la déléguer à un sous-agent
 
 ### Création de trame sur mesure — skill `outline-generator`
 
-Construit la trame de la propale à partir de la qualification de la mission (4 axes) et du catalogue des sections types des propales gagnées. Le livrable est une trame courte et synthétique : un fil rouge explicite et des groupes de sections ordonnés, chacun décrit par son objectif et 2-3 phrases de contenu contextualisé. À proposer une fois le contexte initialisé, quand l'utilisateur veut structurer sa propale.
+Construit la trame de la propale à partir de la qualification de la mission (4 axes), du fil rouge retenu et du catalogue des sections types des propales gagnées. Le livrable est une trame courte et synthétique : le fil rouge en tête et des groupes de sections ordonnés, chacun décrit par son objectif et 2-3 phrases de contenu contextualisé. À proposer une fois le contexte initialisé, quand l'utilisateur veut structurer sa propale.
+
+**Préalable — définir le fil rouge avec l'utilisateur, dans le fil principal.** Le fil rouge est la colonne vertébrale narrative de la propale : il se décide avec l'utilisateur, jamais en aveugle dans un sous-agent. Avant de lancer l'outil :
+
+1. **Proposer** un fil rouge pertinent à partir du contexte projet complet (identification, 4 axes, contexte deal, différenciateurs, enjeux et critères de décision du client, fichiers sources). Le formuler comme une promesse-signature courte, mémorable et centrée sur le client.
+2. **Le challenger** — ne pas s'arrêter à la première formulation. Le stress-tester : est-il différenciant (un concurrent pourrait-il dire exactement la même chose ?) ? répond-il aux critères de décision réels du client ? tient-il sur toute la propale ou seulement sur une partie ? est-il mémorable ? Proposer 2-3 variantes contrastées quand c'est utile et exposer les arbitrages.
+3. **Converger** avec l'utilisateur sur une formulation retenue.
+
+Ce travail est interactif et vit dans le fil principal — c'est l'un des rares échanges qui justifient d'y investir, car il conditionne toute la trame. Si le champ « Fil rouge / promesse-signature » du fichier contexte est déjà renseigné, partir de cette formulation pour la confirmer ou la challenger plutôt que repartir de zéro.
 
 - **Mécanisme** : skill via `skill-executor` (le skill s'appuie sur `references/catalogue-sections.md`) — un seul appel Agent vers `skill-executor` en lui indiquant le skill `outline-generator`.
-- **Entrées à passer** (chemins uniquement) : chemin de `contexte-{projet}.md`, racine de l'espace de travail, nom du projet.
-- **Sorties** : `output/trame-{projet}-V{n}.md` (versionné, jamais écrasé) ; `## Progression` mise à jour.
+- **Entrées à passer** : le **fil rouge retenu** (texte, formulé avec l'utilisateur) ; le chemin de `contexte-{projet}.md` ; la racine de l'espace de travail ; le nom du projet.
+- **Sorties** : `output/trame-{projet}-V{n}.md` (versionné, jamais écrasé) ; champ « Fil rouge / promesse-signature » et `## Progression` du contexte mis à jour.
 - **Retour** : un résumé court (sections retenues/écartées, hypothèses posées, chemin du fichier) — le relayer tel quel. Si l'agent remonte un blocage (axe 1 ou 4 indéductible), poser la question à l'utilisateur et relancer.
 
 ### Revue de trame — agent `trame-reviewer`

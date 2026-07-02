@@ -3,11 +3,11 @@ name: outline-generator
 description: >-
   Construit la trame sur-mesure d'une proposition commerciale (propale) Orkester à partir de la
   qualification de la mission (4 axes) du fichier contexte : sélectionne les sections pertinentes
-  depuis le catalogue de référence et les rassemble en groupes ordonnés autour d'un fil rouge
-  explicite, chaque groupe décrit par son contenu et son objectif. Produit une trame courte et
-  synthétique output/trame-{nom-projet}-V{n}.md. À exécuter exclusivement à travers l'agent
-  skill-executor, en lui fournissant le chemin du fichier contexte-{projet}.md et la racine de
-  l'espace de travail.
+  depuis le catalogue de référence et les rassemble en groupes ordonnés autour du fil rouge fourni
+  (défini en amont avec l'utilisateur), chaque groupe décrit par son contenu et son objectif.
+  Produit une trame courte et synthétique output/trame-{nom-projet}-V{n}.md. À exécuter
+  exclusivement à travers l'agent skill-executor, en lui fournissant le fil rouge retenu, le chemin
+  du fichier contexte-{projet}.md et la racine de l'espace de travail.
 ---
 
 # Trame de proposition commerciale Orkester
@@ -16,7 +16,7 @@ description: >-
 
 Orkester gagne ses propales en réutilisant un socle de sections récurrentes, mais **toutes les sections n'ont pas leur place dans toutes les propales** : une réponse à appel d'offres pour un nouveau client n'a pas la même structure qu'une offre de TMA pour un client historique. Inclure une section inutile dilue le message ; en oublier une attendue (réversibilité en AO, SLA en TMA, RGPD en B2B…) coûte des points.
 
-Ce skill produit une **trame courte et synthétique** : les sections retenues, rassemblées en groupes ordonnés qui racontent une histoire autour du client (storytelling customer-centric), le tout porté par un **fil rouge explicite**. Chaque groupe est décrit en quelques phrases — son contenu et son objectif dans le récit — sans entrer dans des consignes de rédaction détaillées. Le livrable est un **plan de lecture**, pas une propale rédigée. Il s'appuie sur le catalogue de référence `references/catalogue-sections.md`, qui décrit chaque section, sa raison d'être et sa condition d'inclusion.
+Ce skill produit une **trame courte et synthétique** : les sections retenues, rassemblées en groupes ordonnés qui racontent une histoire autour du client (storytelling customer-centric), le tout porté par le **fil rouge fourni en entrée** (défini en amont avec l'utilisateur dans le fil principal). Chaque groupe est décrit en quelques phrases — son contenu et son objectif dans le récit — sans entrer dans des consignes de rédaction détaillées. Le livrable est un **plan de lecture**, pas une propale rédigée. Il s'appuie sur le catalogue de référence `references/catalogue-sections.md`, qui décrit chaque section, sa raison d'être et sa condition d'inclusion.
 
 Ce skill s'exécute en contexte frais et non-interactif : toutes les informations projet viennent du fichier `contexte-{projet}.md` fourni dans le prompt d'invocation.
 
@@ -52,9 +52,9 @@ Pour chaque section du catalogue, évaluer sa condition d'inclusion au regard de
 
 En cas de doute sur une section, préférer l'inclure dans son groupe en la signalant comme optionnelle dans la description, plutôt que de la supprimer silencieusement : c'est à l'utilisateur de trancher à la lecture de la trame.
 
-## Étape 4 — Définir le fil rouge, regrouper et ordonner
+## Étape 4 — Regrouper et ordonner autour du fil rouge
 
-**Définir le fil rouge** : l'idée-force / promesse-signature qui traverse toute la propale et autour de laquelle le récit s'organise. S'appuyer sur le contexte deal du fichier contexte (fil rouge / promesse-signature, différenciateurs) quand il est renseigné ; sinon le formuler depuis les enjeux du client et le signaler comme hypothèse.
+Le **fil rouge** — l'idée-force / promesse-signature qui traverse toute la propale — est **fourni dans le prompt d'invocation** : il a été défini et challengé avec l'utilisateur dans le fil principal. Le prendre tel quel comme colonne vertébrale du récit, sans le redéfinir ni le reformuler. En cas de repli (fil rouge absent du prompt), le reprendre depuis le champ « Fil rouge / promesse-signature » du fichier contexte ; s'il n'y figure pas non plus, le formuler depuis les enjeux du client et le signaler comme hypothèse forte dans le résumé final.
 
 **Regrouper** : rassembler les sections retenues en **groupes cohérents, le moins de groupes possible** (typiquement 5 à 8), chaque groupe portant une étape du récit (ex. « Votre enjeu, notre compréhension », « La vision produit », « Comment nous fabriquons », « Pourquoi nous faire confiance », « Cadre de la mission »…). Une section = un élément d'un groupe, jamais une entrée isolée de la trame, sauf si rien ne peut lui être rattaché.
 
@@ -71,7 +71,7 @@ Ce fichier contient uniquement la trame — la qualification vit dans le fichier
 ```
 # Trame proposée — {nom-projet} V{n}
 
-**Fil rouge :** <la promesse-signature en une phrase, qui traverse tous les groupes>
+**Fil rouge :** <le fil rouge retenu, repris tel quel du prompt d'invocation>
 
 ## 1. <Titre du groupe>
 *Objectif : <une phrase — ce que ce groupe doit produire chez le lecteur : convaincre, rassurer, projeter, prouver…>*
@@ -85,6 +85,8 @@ Ce fichier contient uniquement la trame — la qualification vit dans le fichier
 ```
 
 Les descriptions de groupes doivent rester **spécifiques** au cas — citer le client, le produit, le secteur — mais tenir en 2-3 phrases : la trame entière doit se lire d'un coup d'œil.
+
+Enfin, reporter le fil rouge retenu dans le champ « Fil rouge / promesse-signature » de la section `## Contexte deal` du fichier contexte s'il n'y figure pas déjà à l'identique — pour qu'une reprise de session le conserve.
 
 ## Quand consulter la base orkester-kb
 
