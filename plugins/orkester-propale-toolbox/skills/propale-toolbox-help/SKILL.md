@@ -7,7 +7,8 @@ description: >-
   techniques (agents, skills, délégation), les bonnes pratiques, et comment réagir en cas de
   problème (fichier manquant, référence à un fichier introuvable, session à reprendre, blocage
   d'un sous-agent). À déclencher quand l'utilisateur demande de l'aide, « comment ça marche »,
-  « que peux-tu faire », « à quoi sert ce plugin », ou pose une question sur son fonctionnement.
+  « que peux-tu faire », « à quoi sert ce plugin », pose une question sur son fonctionnement,
+  ou quand une erreur est rencontrée dans le workflow de propale-toolbox.
 ---
 
 # Aide — plugin `orkester-propale-toolbox`
