@@ -2,7 +2,7 @@
 name: propale-toolbox-help
 description: >-
   Documentation de référence du plugin `orkester-propale-toolbox`. À utiliser pour répondre aux
-  questions de l'utilisateur sur le plugin : comment l'utiliser, quels outils existent et quand
+  questions de l'utilisateur ou pour récolter des informations sur le plugin : comment l'utiliser, quels outils existent et quand
   les lancer, comment fonctionnent les sessions et l'espace de travail, quels sont les détails
   techniques (agents, skills, délégation), les bonnes pratiques, et comment réagir en cas de
   problème (fichier manquant, référence à un fichier introuvable, session à reprendre, blocage
