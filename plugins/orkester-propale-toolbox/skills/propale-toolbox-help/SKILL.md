@@ -8,7 +8,9 @@ description: >-
   problème (fichier manquant, référence à un fichier introuvable, session à reprendre, blocage
   d'un sous-agent). À déclencher quand l'utilisateur demande de l'aide, « comment ça marche »,
   « que peux-tu faire », « à quoi sert ce plugin », pose une question sur son fonctionnement,
-  ou quand une erreur est rencontrée dans le workflow de propale-toolbox.
+  quand une erreur est rencontrée dans le workflow de propale-toolbox, quand l'utilisateur
+  utilise mal le plugin (ex. demande une trame ou un livrable sur un espace de travail vierge,
+  sans cahier des charges ni brief), ou quand Claude peine à réaliser une tâche demandée.
 ---
 
 # Aide — plugin `orkester-propale-toolbox`
@@ -82,6 +84,16 @@ orkester-propale-toolbox/
 - **Reprendre proprement** — pour continuer un projet, rouvrir une conversation dans le même dossier ; inutile de tout recontextualiser à la main, le fichier de contexte s'en charge.
 
 ## Dépannage — comment réagir
+
+**L'utilisateur demande un livrable (trame, revue…) avec un espace de travail vierge et aucun input.**
+C'est le cas de mauvaise utilisation le plus fréquent. **Ne pas lancer un long questionnaire** pour reconstituer un cahier des charges à la main : ce n'est pas ainsi que le plugin est conçu. Expliquer brièvement le point d'entrée attendu et demander à l'utilisateur de fournir la matière première :
+- soit **déposer un cahier des charges / appel d'offres / brief** à la racine de l'espace de travail,
+- soit **le joindre directement à la conversation**.
+
+Une fois la source disponible, l'initialisation se déroule normalement (lecture des sources → quelques questions ciblées seulement sur ce qui manque → création du contexte). Quelques questions de cadrage restent utiles ; c'est le questionnaire exhaustif en l'absence totale de source qu'il faut éviter. Si l'utilisateur n'a réellement aucun document, le lui dire clairement : un minimum d'éléments (client, type de mission, contexte commercial) est nécessaire pour produire quoi que ce soit de pertinent.
+
+**Claude peine à réaliser une tâche / n'est pas sûr de la marche à suivre.**
+Ne pas improviser ni forcer un résultat approximatif. Faire un pas en arrière : vérifier l'état réel de l'espace de travail (listing), le contexte disponible, et l'outil approprié à la demande (voir le tableau des outils). Si la demande sort du périmètre du plugin, le dire et proposer l'alternative la plus proche. Si un input manque, le demander précisément plutôt que de deviner. En cas de doute sur le fonctionnement lui-même, s'appuyer sur ce présent skill.
 
 **Aucun `contexte-{projet}.md` trouvé alors que l'utilisateur parle d'un projet existant.**
 Lister la racine et les sous-dossiers pour repérer un contexte nommé différemment ou placé ailleurs. Si vraiment absent : soit on est en première session (initialiser normalement), soit le fichier a été perdu — le reconstruire à partir des fichiers produits présents (`output/`, `artifact/`) et de quelques questions ciblées, puis reprendre.

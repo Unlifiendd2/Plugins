@@ -68,8 +68,12 @@ C'est le mécanisme de session du plugin : **tout travail peut être repris depu
 
 ### 2b. Pas de fichier de contexte → première session
 
-1. **Lire les fichiers sources** ajoutés par l'utilisateur à la racine, en appliquant la **sécurité de taille** décrite plus haut : sous le seuil, lecture directe ; au-dessus (ou format binaire), résumé structuré délégué à un sous-agent générique.
-2. **Poser des questions courtes et groupées** pour combler ce que les fichiers ne disent pas (client, type de mission, contexte commercial, contraintes, différenciateurs). Ne pas tout demander d'un coup si l'essentiel permet déjà de démarrer. L'initialisation est le moment d'investir dans la qualité du contexte : ces échanges rendront tout le fil de discussion suivant plus pertinent.
+**D'abord, vérifier qu'il existe une matière première.** Si la racine ne contient aucun fichier source **et** que rien n'est joint à la conversation, ne **pas** lancer un questionnaire exhaustif pour reconstituer un cahier des charges à la main — ce n'est pas le point d'entrée prévu. Orienter l'utilisateur (voir le skill `propale-toolbox-help`, cas « espace de travail vierge ») : lui demander de **déposer un cahier des charges / appel d'offres / brief** à la racine de l'espace de travail, ou de **le joindre à la conversation**. Attendre cette matière avant de continuer.
+
+Une fois une source disponible :
+
+1. **Lire les fichiers sources** ajoutés par l'utilisateur à la racine (ou joints), en appliquant la **sécurité de taille** décrite plus haut : sous le seuil, lecture directe ; au-dessus (ou format binaire), résumé structuré délégué à un sous-agent générique.
+2. **Poser quelques questions ciblées** uniquement sur ce que les fichiers ne disent pas (client, type de mission, contexte commercial, contraintes, différenciateurs). Ne pas tout redemander si les sources couvrent déjà l'essentiel. L'initialisation est le moment d'investir dans la qualité du contexte : ces échanges rendront tout le fil de discussion suivant plus pertinent.
 3. **Créer `contexte-{projet}.md` à la racine** selon le format ci-dessous — c'est le seul fichier que le fil principal écrit lui-même. Les champs inconnus restent marqués `À compléter`.
 4. **Présenter les outils disponibles** et demander lequel lancer.
 
@@ -129,7 +133,9 @@ La boîte à outils se remplit progressivement ; chaque outil ajouté au plugin 
 
 Si l'utilisateur demande une tâche non couverte, la déléguer à un sous-agent générique avec un prompt complet, en respectant les règles de délégation ci-dessus.
 
-Si l'utilisateur pose une question sur le plugin lui-même (fonctionnement, outils, sessions, dépannage, bonnes pratiques) plutôt que de demander une action, s'appuyer sur le skill `propale-toolbox-help` qui centralise toute la documentation de référence.
+**Avant de lancer un outil, vérifier ses prérequis** (contexte initialisé, entrées nécessaires présentes). Si l'utilisateur demande un livrable alors que les prérequis manquent — typiquement une trame sur un espace de travail vierge, sans cahier des charges ni brief — ne **pas** compenser par un questionnaire exhaustif ni deviner : orienter l'utilisateur vers la fourniture de la matière première (déposer une source à la racine ou la joindre à la conversation), comme à l'initialisation. Le skill `propale-toolbox-help` détaille la conduite à tenir.
+
+Si l'utilisateur pose une question sur le plugin lui-même (fonctionnement, outils, sessions, dépannage, bonnes pratiques) plutôt que de demander une action, ou si Claude peine à réaliser une tâche / sort du périmètre prévu, s'appuyer sur le skill `propale-toolbox-help` qui centralise toute la documentation de référence.
 
 ### Création de trame sur mesure — skill `outline-generator`
 
