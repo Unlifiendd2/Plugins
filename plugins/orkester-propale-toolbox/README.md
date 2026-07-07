@@ -31,10 +31,12 @@ orkester-propale-toolbox/
 ├── skills/
 │   ├── propale-toolbox/
 │   │   └── SKILL.md              # Point d'entrée : orchestrateur de session
-│   └── outline-generator/
-│       ├── SKILL.md              # Création de trame → output/trame-{projet}-V{n}.md
-│       └── references/
-│           └── catalogue-sections.md  # Catalogue des ~35 sections types (A à H)
+│   ├── outline-generator/
+│   │   ├── SKILL.md              # Création de trame → output/trame-{projet}-V{n}.md
+│   │   └── references/
+│   │       └── catalogue-sections.md  # Catalogue des ~35 sections types (A à H)
+│   └── propale-toolbox-help/
+│       └── SKILL.md              # Documentation de référence du plugin
 ├── agents/
 │   ├── skill-executor.md         # Exécution de skills en contexte frais
 │   └── trame-reviewer.md         # Revue de trame 3 lentilles → output/revue-{projet}.md

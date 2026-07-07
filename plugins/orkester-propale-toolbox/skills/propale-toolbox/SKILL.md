@@ -129,6 +129,8 @@ La boîte à outils se remplit progressivement ; chaque outil ajouté au plugin 
 
 Si l'utilisateur demande une tâche non couverte, la déléguer à un sous-agent générique avec un prompt complet, en respectant les règles de délégation ci-dessus.
 
+Si l'utilisateur pose une question sur le plugin lui-même (fonctionnement, outils, sessions, dépannage, bonnes pratiques) plutôt que de demander une action, s'appuyer sur le skill `propale-toolbox-help` qui centralise toute la documentation de référence.
+
 ### Création de trame sur mesure — skill `outline-generator`
 
 Construit la trame de la propale à partir de la qualification de la mission (4 axes), du fil rouge retenu et du catalogue des sections types des propales gagnées. Le livrable est une trame courte et synthétique : le fil rouge en tête et des groupes de sections ordonnés, chacun décrit par son objectif et 2-3 phrases de contenu contextualisé. À proposer une fois le contexte initialisé, quand l'utilisateur veut structurer sa propale.

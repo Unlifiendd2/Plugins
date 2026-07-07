@@ -1,15 +1,6 @@
-# Workflow réponse appel d'offre
 
-Input user
+Aller voir au début dans orkester-kb s'il y a des projets similaires.
+Encourager les sous-agents à tous les étages à interroger orkester-kb.
+Demander avant de passer à la génération de trame.
 
-## Trame maker (contexte frais)
-
-Consultation catalogue sections + contexte projet -> proposition trame
-
-## Trame reviewer (contexte frais)
-
-Trame + Contexte projet + ref KB -> review cohérence, pertinence, storytelling -> reco + trame réorga
-
-## Identity section (contexte frais)
-
-contexte projet + trame + ref conseil redac + ref KB -> qui somme nous personalisé pour chaque section demandée (bloc entier ou sections indépendantes)
+Module références.
