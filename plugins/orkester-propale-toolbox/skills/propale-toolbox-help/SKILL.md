@@ -25,7 +25,7 @@ Le plugin aide un project owner Orkester à construire une proposition commercia
 
 ## Comment l'utiliser — le cycle de vie type
 
-1. **Démarrer** — ouvrir une conversation dans le dossier de travail (idéalement avec les fichiers sources : cahier des charges, AO, notes, à la racine). Le skill `propale-toolbox` s'initialise : il lit un contexte existant (reprise) ou lit les sources + pose quelques questions, puis crée `contexte-{projet}.md`.
+1. **Démarrer** — ouvrir une conversation dans le dossier de travail (idéalement avec les fichiers sources : cahier des charges, AO, notes, à la racine). Le skill `propale-toolbox` s'initialise : soit il lit un contexte existant (reprise), soit, en première session, il délègue à l'agent `context-initializer` qui synthétise les sources, cherche dans `Orkester-kb` les projets/clients/secteurs déjà traités par Orkester, et crée `contexte-{projet}.md` ; l'orchestrateur complète ensuite avec quelques questions ciblées.
 2. **Structurer** — définir le fil rouge avec l'orchestrateur (proposé puis challengé), puis lancer `outline-generator` pour produire la trame (`output/trame-{projet}-V{n}.md`).
 3. **Réviser** — lancer `trame-reviewer` pour une revue critique 3 lentilles (`output/revue-{projet}.md`), itérer sur la trame si besoin (nouvelle version V{n+1}).
 4. **Consolider** — en fin de session, déléguer la consolidation des livrables de `output/` vers un fichier final dans `artifact/`.
@@ -67,6 +67,7 @@ orkester-propale-toolbox/
 │   ├── outline-generator/   # Création de trame (+ references/catalogue-sections.md)
 │   └── propale-toolbox-help/ # Ce skill de documentation
 └── agents/
+    ├── context-initializer.md # Init de session : synthèse des sources + recherche Orkester-kb
     ├── skill-executor.md    # Exécute un skill en contexte frais (accès Orkester-kb)
     └── trame-reviewer.md    # Revue 3 lentilles en contexte frais (accès Orkester-kb)
 ```

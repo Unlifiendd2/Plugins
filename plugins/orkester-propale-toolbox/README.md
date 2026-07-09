@@ -38,6 +38,7 @@ orkester-propale-toolbox/
 │   └── propale-toolbox-help/
 │       └── SKILL.md              # Documentation de référence du plugin
 ├── agents/
+│   ├── context-initializer.md    # Init de session : synthèse des sources + recherche Orkester-kb
 │   ├── skill-executor.md         # Exécution de skills en contexte frais
 │   └── trame-reviewer.md         # Revue de trame 3 lentilles → output/revue-{projet}.md
 └── README.md                     # Ce fichier

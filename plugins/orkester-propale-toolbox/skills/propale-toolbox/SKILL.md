@@ -72,9 +72,9 @@ C'est le mécanisme de session du plugin : **tout travail peut être repris depu
 
 Une fois une source disponible :
 
-1. **Lire les fichiers sources** ajoutés par l'utilisateur à la racine (ou joints), en appliquant la **sécurité de taille** décrite plus haut : sous le seuil, lecture directe ; au-dessus (ou format binaire), résumé structuré délégué à un sous-agent générique.
-2. **Poser quelques questions ciblées** uniquement sur ce que les fichiers ne disent pas (client, type de mission, contexte commercial, contraintes, différenciateurs). Ne pas tout redemander si les sources couvrent déjà l'essentiel. L'initialisation est le moment d'investir dans la qualité du contexte : ces échanges rendront tout le fil de discussion suivant plus pertinent.
-3. **Créer `contexte-{projet}.md` à la racine** selon le format ci-dessous — c'est le seul fichier que le fil principal écrit lui-même. Les champs inconnus restent marqués `À compléter`.
+1. **Déléguer l'initialisation à l'agent `context-initializer`** (`${CLAUDE_PLUGIN_ROOT}/agents/context-initializer.md`) — un seul appel Agent, en lui passant les chemins des fichiers d'input, la racine de l'espace de travail et le nom du projet. Cet agent transversal, en contexte frais, lit et synthétise toutes les sources, crée `contexte-{projet}.md` (synthèse, 4 axes déduits, contexte deal), interroge `Orkester-kb` pour repérer les projets / clients / secteurs similaires déjà traités par Orkester et consigne ces précédents dans le fichier. Il ne lit pas les gros fichiers dans le fil principal : c'est tout l'intérêt de la délégation. Il retourne un résumé court (synthèse des sources, axes déduits, précédents Orkester, champs restés `À compléter`).
+2. **Relayer ce résumé à l'utilisateur**, puis **poser quelques questions ciblées** uniquement sur les champs signalés `À compléter` par l'agent — en priorité les axes 1 (Type) et 4 (Contexte commercial). Ne rien redemander que les sources couvrent déjà. L'initialisation est le moment d'investir dans la qualité du contexte : ces échanges rendront tout le fil suivant plus pertinent.
+3. **Compléter `contexte-{projet}.md`** avec les réponses de l'utilisateur (le fichier existe déjà, seeded par l'agent) et cocher `- [x] Contexte finalisé avec l'utilisateur` dans la `## Progression`. C'est la seule écriture directe du fil principal sur le contexte, à l'initialisation.
 4. **Présenter les outils disponibles** et demander lequel lancer.
 
 Les mises à jour ultérieures du fichier de contexte (progression, enrichissements) sont le fait des sous-agents, au fil de leurs tâches.
@@ -102,13 +102,23 @@ Les mises à jour ultérieures du fichier de contexte (progression, enrichisseme
 - Contraintes (budget, délai, ton, longueur) : ...
 - Fil rouge / promesse-signature : ...
 
+## Précédents Orkester (base de connaissances)
+- Projets / clients / secteurs similaires déjà traités : ...
+- Propales gagnées réutilisables comme référence :
+  - {source propale_*.md} — comparable car ... — réutilisable : ...
+
 ## Fichiers sources
 - {chemin} — {description en une ligne}
 
 ## Progression
-- [x] Contexte initialisé
-- [ ] ...
+- [x] Sources lues et synthétisées
+- [x] Précédents Orkester recherchés
+- [ ] Contexte finalisé avec l'utilisateur
+- [ ] Trame créée
+- [ ] Revue de trame effectuée
 ```
+
+Ce format est produit par l'agent `context-initializer` à l'initialisation ; la section `## Précédents Orkester` est renseignée depuis la recherche dans `Orkester-kb`.
 
 ## Délégation aux sous-agents
 
