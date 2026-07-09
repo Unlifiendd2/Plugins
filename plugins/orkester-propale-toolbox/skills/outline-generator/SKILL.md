@@ -5,9 +5,10 @@ description: >-
   qualification de la mission (4 axes) du fichier contexte : sélectionne les sections pertinentes
   depuis le catalogue de référence et les rassemble en groupes ordonnés autour du fil rouge fourni
   (défini en amont avec l'utilisateur), chaque groupe décrit par son contenu et son objectif.
-  Produit une trame courte et synthétique output/trame-{nom-projet}-V{n}.md. À exécuter
-  exclusivement à travers l'agent skill-executor, en lui fournissant le fil rouge retenu, le chemin
-  du fichier contexte-{projet}.md et la racine de l'espace de travail.
+  Produit une trame courte et synthétique output/trame-{nom-projet}-V{n}.md. Orchestré par le skill
+  propale-toolbox (jamais invoqué directement) et exécuté à travers l'agent skill-executor, en lui
+  fournissant le fil rouge retenu, le chemin du fichier contexte-{projet}.md et la racine de
+  l'espace de travail.
 ---
 
 # Trame de proposition commerciale Orkester

@@ -7,7 +7,8 @@ description: >
   projets, clients ou secteurs similaires déjà traités par Orkester et consigne ces précédents
   dans le fichier contexte. Retourne à l'orchestrateur un résumé court (synthèse des sources, axes
   déduits, précédents Orkester, informations manquantes). Lancé une fois par l'orchestrateur
-  propale-toolbox au démarrage d'une première session, pour éviter d'encombrer le fil principal.
+  propale-toolbox au démarrage d'une première session (jamais invoqué directement), pour éviter
+  d'encombrer le fil principal.
 model: inherit
 color: cyan
 tools: ["Read", "Write", "Glob", "mcp__Orkester-kb__search_kb_semantic", "mcp__Orkester-kb__search_kb_hybrid", "mcp__Orkester-kb__get_full_document", "mcp__Orkester-kb__search_kb_keyword", "mcp__Orkester-kb__get_adjacent_chunks"]

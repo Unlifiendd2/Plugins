@@ -3,9 +3,10 @@ name: skill-executor
 description: >
   Utiliser cet agent pour exécuter un skill du plugin en contexte frais, quand la tâche a besoin de
   la structure d'un skill (références, scripts, assets…). Il produit les fichiers directement dans
-  l'espace de travail et ne retourne qu'un résumé court.
+  l'espace de travail et ne retourne qu'un résumé court. Orchestré par le skill `propale-toolbox`
+  (jamais invoqué directement depuis le fil principal).
   <example>
-  Context: le fichier de contexte du projet est initialisé
+  Context: l'orchestrateur propale-toolbox a chargé le contexte et l'utilisateur a validé la création de trame
   user: "Construis la trame de propale pour ce dossier."
   assistant: "Je délègue à l'agent skill-executor en lui indiquant le skill à exécuter et le chemin du fichier de contexte."
   </example>

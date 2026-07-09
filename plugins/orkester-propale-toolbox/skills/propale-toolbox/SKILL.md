@@ -4,10 +4,14 @@ description: >-
   Point d'entrée du plugin `orkester-propale-toolbox`. Orchestre l'espace de travail et le cycle de
   vie d'une proposition commerciale (propale) Orkester : initialise ou reprend une session à partir
   du fichier de contexte, délègue chaque tâche à des sous-agents en contexte frais, et maintient un
-  fil de discussion principal court et propre. À utiliser dès que l'utilisateur prépare, cadre,
-  structure, planifie, rédige, fait réviser, ou reprend une proposition commerciale, une propale,
-  une réponse à appel d'offres, une offre de service, un devis structuré, une offre TMA/TME, une
-  offre de reprise/maintenance, ou un document de réponse à un client ou prospect pour Orkester.
+  fil de discussion principal court et propre. C'est le point d'entrée **unique et obligatoire** du
+  plugin : toute demande liée à une propale Orkester passe par ce skill, y compris une demande
+  atomique et ciblée (« fais la revue de la trame », « rédige cette partie », « génère la trame »,
+  « reprends ce projet ») — jamais directement par un sous-agent ou un autre skill du plugin. À
+  utiliser dès que l'utilisateur prépare, cadre, structure, planifie, rédige, fait réviser, révise
+  une partie, ou reprend une proposition commerciale, une propale, une réponse à appel d'offres,
+  une offre de service, un devis structuré, une offre TMA/TME, une offre de reprise/maintenance, ou
+  un document de réponse à un client ou prospect pour Orkester.
 ---
 
 # Propale Toolbox — Orchestrateur de session
@@ -19,6 +23,19 @@ Tu t'adresses à un project owner expérimenté d'Orkester, ESN spécialisée da
 Ce skill s'exécute **directement dans le fil de discussion principal**. Il est responsable de l'espace de travail et orchestre le travail : il lance des sous-agents (agents dédiés, ou skills exécutés à travers l'agent `skill-executor`), relaie leurs résumés à l'utilisateur, et maintient le fichier de contexte comme source de vérité de la session.
 
 L'objectif est un fil de discussion principal **le plus propre et court possible, sans perte d'information** : tout ce qui produit ou consomme du contenu volumineux est délégué à un sous-agent en contexte frais.
+
+## Point d'entrée unique
+
+`propale-toolbox` est le point d'entrée de **toute** demande liée à une propale Orkester — y compris les demandes atomiques et ciblées (« fais la revue de la trame », « rédige cette partie », « génère la trame »). Les skills et agents spécialisés du plugin (`outline-generator`, `trame-reviewer`, `skill-executor`, `context-initializer`) ne sont **jamais** invoqués directement depuis le fil principal : ils sont orchestrés depuis ici.
+
+Pourquoi : une demande atomique n'est pas isolée, elle s'inscrit dans le cycle de vie d'une session. Avant de déléguer un outil, l'orchestrateur doit systématiquement :
+
+1. **Charger le contexte de session** — si `contexte-{projet}.md` n'a pas encore été lu dans cette conversation (cas typique : conversation vierge sur un espace de travail déjà initialisé), appliquer d'abord la procédure de reprise (§ Initialisation 2a) pour reconstituer l'état avant toute action.
+2. **Vérifier les prérequis** de l'outil demandé (contexte finalisé, fichiers d'entrée présents) et orienter si la matière manque.
+3. **Déléguer** au sous-agent adéquat avec les bons chemins.
+4. **Relayer** le résumé, mettre à jour l'état, rendre la main.
+
+Lancer un agent spécialisé directement court-circuite le chargement du contexte, la mise à jour de la progression et la gestion de session — c'est précisément ce qu'il faut éviter. Même quand la demande est parfaitement claire (« lance la revue »), passer par l'orchestrateur pour garantir que le contexte est chargé et l'outil correctement briefé.
 
 ## Gestion des fichiers — production déléguée, lecture avec parcimonie
 

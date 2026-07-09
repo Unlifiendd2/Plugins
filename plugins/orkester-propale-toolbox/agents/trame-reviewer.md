@@ -6,8 +6,9 @@ description: >
   trame et le fichier contexte depuis les chemins fournis, analyse les trois axes, écrit
   directement le rapport final output/revue-[nom-projet].md, met à jour la progression du fichier
   contexte, et retourne uniquement un résumé court (scores, verdict global, chemin du rapport).
-  À lancer en un seul appel Agent depuis le fil principal, avec les chemins de la trame, du
-  fichier contexte et de la racine de l'espace de travail.
+  Orchestré par le skill `propale-toolbox` (jamais invoqué directement depuis le fil principal) :
+  lancé en un seul appel Agent avec les chemins de la trame, du fichier contexte et de la racine
+  de l'espace de travail.
 model: inherit
 color: red
 tools: ["Read", "Write", "mcp__Orkester-kb__search_kb_semantic", "mcp__Orkester-kb__search_kb_hybrid", "mcp__Orkester-kb__get_full_document", "mcp__Orkester-kb__search_kb_keyword", "mcp__Orkester-kb__get_adjacent_chunks"]
