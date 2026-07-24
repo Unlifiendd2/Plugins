@@ -41,6 +41,24 @@
       ]
     },
     {
+      "name": "orkester-propale-toolbox-no-mcp",
+      "source": "./plugins/orkester-propale-toolbox-no-mcp",
+      "description": "Boîte à outils Orkester pour la construction de propositions commerciales (version sans MCP, sans accès à Orkester-kb) : orchestration par sous-agents, espace de travail sessionné, fil de discussion principal minimal.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Paulin B",
+        "email": "paulin.blattmann@orkester.fr"
+      },
+      "category": "PM",
+      "keywords": [
+        "propale",
+        "projet",
+        "toolbox",
+        "orchestration",
+        "no-mcp"
+      ]
+    },
+    {
       "name": "propale-review-plugin",
       "source": "./plugins/propale-review-plugin",
       "description": "Revue indépendante d'une trame de proposition commerciale selon trois axes simultanés : storytelling, cohérence et pertinence.",
