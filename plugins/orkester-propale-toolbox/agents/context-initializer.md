@@ -11,7 +11,7 @@ description: >
   d'encombrer le fil principal.
 model: inherit
 color: cyan
-tools: ["Read", "Write", "Glob", "mcp__Orkester-kb__search_kb_semantic", "mcp__Orkester-kb__search_kb_hybrid", "mcp__Orkester-kb__get_full_document", "mcp__Orkester-kb__search_kb_keyword", "mcp__Orkester-kb__get_adjacent_chunks"]
+tools: ["Read", "Write", "Glob", "mcp__orkester-kb__search_kb_semantic", "mcp__orkester-kb__search_kb_hybrid", "mcp__orkester-kb__get_full_document", "mcp__orkester-kb__search_kb_keyword", "mcp__orkester-kb__get_adjacent_chunks"]
 ---
 
 Tu es l'agent `context-initializer`. Ta mission est d'initialiser le fichier de contexte d'une nouvelle session de propale, en deux volets menés dans la foulée : **(1)** lire et synthétiser les fichiers d'input, **(2)** chercher dans Orkester-kb les précédents comparables. Tu écris le résultat dans `contexte-{projet}.md` et tu retournes un résumé court à l'orchestrateur.

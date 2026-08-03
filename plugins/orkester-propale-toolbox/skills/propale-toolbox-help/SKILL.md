@@ -25,7 +25,7 @@ Le plugin aide un project owner Orkester à construire une proposition commercia
 
 ## Comment l'utiliser — le cycle de vie type
 
-1. **Démarrer** — ouvrir une conversation dans le dossier de travail (idéalement avec les fichiers sources : cahier des charges, AO, notes, à la racine). Le skill `propale-toolbox` s'initialise : soit il lit un contexte existant (reprise), soit, en première session, il délègue à l'agent `context-initializer` qui synthétise les sources, cherche dans `Orkester-kb` les projets/clients/secteurs déjà traités par Orkester, et crée `contexte-{projet}.md` ; l'orchestrateur complète ensuite avec quelques questions ciblées.
+1. **Démarrer** — ouvrir une conversation dans le dossier de travail (idéalement avec les fichiers sources : cahier des charges, AO, notes, à la racine). Le skill `propale-toolbox` s'initialise : soit il lit un contexte existant (reprise), soit, en première session, il délègue à l'agent `context-initializer` qui synthétise les sources, cherche dans `orkester-kb` les projets/clients/secteurs déjà traités par Orkester, et crée `contexte-{projet}.md` ; l'orchestrateur complète ensuite avec quelques questions ciblées.
 2. **Structurer** — définir le fil rouge avec l'orchestrateur (proposé puis challengé), puis lancer `outline-generator` pour produire la trame (`output/trame-{projet}-V{n}.md`).
 3. **Réviser** — lancer `trame-reviewer` pour une revue critique 3 lentilles (`output/revue-{projet}.md`), itérer sur la trame si besoin (nouvelle version V{n+1}).
 4. **Consolider** — en fin de session, déléguer la consolidation des livrables de `output/` vers un fichier final dans `artifact/`.
@@ -119,5 +119,5 @@ C'est un cas légitime de lecture directe par le fil principal : lire le fichier
 
 ## Limites connues
 
-- Le fil principal n'a pas accès à `Orkester-kb` : la proposition de fil rouge s'appuie sur le contexte projet déjà consolidé, pas sur une recherche live dans les propales gagnées. Pour un ancrage KB, déléguer une recherche préparatoire à un sous-agent.
+- Le fil principal n'a pas accès à `orkester-kb` : la proposition de fil rouge s'appuie sur le contexte projet déjà consolidé, pas sur une recherche live dans les propales gagnées. Pour un ancrage KB, déléguer une recherche préparatoire à un sous-agent.
 - Le plugin couvre aujourd'hui le cadrage, la trame et la revue ; la rédaction fine des sections reste à venir.
