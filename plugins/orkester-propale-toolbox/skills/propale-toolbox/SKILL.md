@@ -3,8 +3,8 @@ name: propale-toolbox
 description: >-
   Point d'entrée du plugin `orkester-propale-toolbox`. Orchestre l'espace de travail et le cycle de
   vie d'une proposition commerciale (propale) Orkester : initialise ou reprend une session à partir
-  du fichier de contexte, délègue chaque tâche à des sous-agents en contexte frais, et maintient un
-  fil de discussion principal court et propre. C'est le point d'entrée **unique et obligatoire** du
+  du fichier `progression.md`, délègue chaque tâche à des sous-agents en contexte frais, et
+  maintient un fil de discussion principal court et propre. C'est le point d'entrée **unique et obligatoire** du
   plugin : toute demande liée à une propale Orkester passe par ce skill, y compris une demande
   atomique et ciblée (« fais la revue de la trame », « rédige cette partie », « génère la trame »,
   « reprends ce projet ») — jamais directement par un sous-agent ou un autre skill du plugin. À
@@ -20,7 +20,7 @@ Tu t'adresses à un project owner expérimenté d'Orkester, ESN spécialisée da
 
 ## Rôle
 
-Ce skill s'exécute **directement dans le fil de discussion principal**. Il est responsable de l'espace de travail et orchestre le travail : il lance des sous-agents (agents dédiés, ou skills exécutés à travers l'agent `skill-executor`), relaie leurs résumés à l'utilisateur, et maintient le fichier de contexte comme source de vérité de la session.
+Ce skill s'exécute **directement dans le fil de discussion principal**. Il est responsable de l'espace de travail et orchestre le travail : il lance des sous-agents (agents dédiés, ou skills exécutés à travers l'agent `skill-executor`), relaie leurs résumés à l'utilisateur, et maintient `progression.md` comme source de vérité de la session.
 
 L'objectif est un fil de discussion principal **le plus propre et court possible, sans perte d'information** : tout ce qui produit ou consomme du contenu volumineux est délégué à un sous-agent en contexte frais.
 
@@ -30,40 +30,45 @@ L'objectif est un fil de discussion principal **le plus propre et court possible
 
 Pourquoi : une demande atomique n'est pas isolée, elle s'inscrit dans le cycle de vie d'une session. Avant de déléguer un outil, l'orchestrateur doit systématiquement :
 
-1. **Charger le contexte de session** — si `contexte-{projet}.md` n'a pas encore été lu dans cette conversation (cas typique : conversation vierge sur un espace de travail déjà initialisé), appliquer d'abord la procédure de reprise (§ Initialisation 2a) pour reconstituer l'état avant toute action.
+1. **Charger l'état de session** — si `progression.md` n'a pas encore été lu dans cette conversation (cas typique : conversation vierge sur un espace de travail déjà initialisé), appliquer d'abord la procédure de reprise (§ Initialisation 3a) pour reconstituer l'état avant toute action.
 2. **Vérifier les prérequis** de l'outil demandé (contexte finalisé, fichiers d'entrée présents) et orienter si la matière manque.
 3. **Déléguer** au sous-agent adéquat avec les bons chemins.
 4. **Relayer** le résumé, mettre à jour l'état, rendre la main.
 
 Lancer un agent spécialisé directement court-circuite le chargement du contexte, la mise à jour de la progression et la gestion de session — c'est précisément ce qu'il faut éviter. Même quand la demande est parfaitement claire (« lance la revue »), passer par l'orchestrateur pour garantir que le contexte est chargé et l'outil correctement briefé.
 
-## Gestion des fichiers — production déléguée, lecture avec parcimonie
+## Gestion des fichiers — production déléguée, accès à la donnée délégué
 
 Le fonctionnement par défaut :
 
-- La création et la modification des fichiers de travail sont **toujours déléguées aux sous-agents**. Le fil principal n'écrit jamais de fichier de travail lui-même — seule la création de `contexte-{projet}.md` à l'initialisation lui revient.
+- La création et la modification des fichiers de travail sont **toujours déléguées aux sous-agents**. Le fil principal n'écrit lui-même que les deux fichiers de pilotage de la session : `output/contexte.md`, co-produit avec l'utilisateur à l'initialisation, et les mises à jour de `progression.md` qui en découlent.
 - Les sous-agents retournent un **résumé court** de leur travail (statut, chemins produits, points saillants) — c'est ce résumé qui est relayé à l'utilisateur. Le fil principal n'a pas besoin de lire les fichiers produits pour en rendre compte.
 - **Lister l'espace de travail** (noms, tailles, dates) est toujours permis : vérifier l'état, lever une ambiguïté sur un chemin, confirmer qu'un sous-agent a bien produit ce qu'il annonce.
 
-La lecture directe reste possible quand elle est utile : si un échange avec l'utilisateur nécessite des informations contenues dans les fichiers produits (répondre à une question précise, comparer des points entre versions, citer un passage), le fil principal peut les lire. C'est un outil de conversation, pas de production — ne charger dans le fil que ce dont la discussion a réellement besoin.
+### Délégation de l'accès à la donnée — la règle stricte
 
-### Sécurité de taille — la seule règle stricte
+Le fil principal **ne lit jamais les fichiers sources** déposés par l'utilisateur (cahier des charges, appel d'offres, brief, annexes), quels que soient leur taille et leur format. Leur lecture est déléguée à un sous-agent, qui en produit un **résumé structuré, un par source**, dans `output/tmp/`.
 
-Avant de lire des fichiers fournis par l'utilisateur, toujours vérifier leur taille via un listing. Estimation : 1 page ≈ 3 000 caractères ≈ 3 Ko de texte brut, soit un seuil de **100 pages cumulées ≈ 300 Ko**. Au-delà du seuil — ou si l'estimation est peu fiable (formats binaires : PDF, DOCX, XLSX…) — ne pas les lire : invoquer un sous-agent générique chargé d'en produire un **résumé structuré et précis** (client, contexte, périmètre, contraintes, critères de décision, chiffres clés), retourné dans son message final, et travailler à partir de ce résumé.
+La compréhension du projet par le fil principal s'appuie sur **ces résumés** : c'est là qu'il va chercher la matière quand il en a besoin. Ils sont conçus pour cela — denses, structurés, fidèles. Si une source arrive en cours de session (fichier déposé plus tard, pièce jointe), appliquer la même règle : déléguer sa lecture, puis travailler à partir du résumé produit.
+
+La lecture directe des **fichiers produits** — résumés de `output/tmp/`, livrables de `output/`, finaux d'`artifact/` — reste libre quand la discussion le nécessite : répondre à une question précise, comparer deux versions, citer un passage. C'est un outil de conversation, pas de production ; ne charger dans le fil que ce dont la discussion a réellement besoin.
 
 ## Structure de l'espace de travail
 
 ```
 {dossier de travail}/
-├── contexte-{projet}.md      # Source de vérité de la session (créé à l'initialisation)
-├── {fichiers sources}        # Fichiers ajoutés par l'utilisateur à la racine (cahier des charges, AO, notes…)
+├── progression.md            # Source de vérité de la session (créé à l'initialisation)
+├── {fichiers sources}        # Déposés par l'utilisateur (cahier des charges, AO, notes…) — jamais lus par le fil principal
 ├── output/
-│   ├── tmp/                  # Fichiers temporaires et intermédiaires des sous-agents
-│   └── …                     # Fichiers produits de sortie, à destination de l'utilisateur
+│   ├── contexte.md           # Socle de la propale : contexte, objectifs, enjeux, périmètre, précédents
+│   ├── tmp/                  # Résumés des sources + fichiers intermédiaires des sous-agents
+│   └── …                     # Autres livrables (trames, revues…)
 └── artifact/                 # Fichiers finaux complets — marquent en général une fin de session
 ```
 
-- **`output/tmp/`** — fichiers de travail intermédiaires (analyses partielles, brouillons, échanges entre sous-agents). Jamais présentés à l'utilisateur comme livrables.
+- **`progression.md`** — état de la session : identification, sources et leurs résumés, précédents Orkester, décisions retenues, étapes franchies, livrables produits. C'est le fichier qu'on relit pour reprendre une session depuis une conversation vierge.
+- **`output/contexte.md`** — le socle de la propale : la raison d'être du projet et la lecture qu'Orkester en fait. Tous les livrables suivants s'y adossent.
+- **`output/tmp/`** — résumés des sources (`resume-{source}.md`) et fichiers de travail intermédiaires. Les résumés sont la matière de travail du fil principal ; le reste n'est jamais présenté à l'utilisateur comme livrable.
 - **`output/`** — livrables de la session (trames, sections rédigées, rapports de revue). C'est là que l'utilisateur trouve les résultats.
 - **`artifact/`** — versions finales complètes et consolidées. Un fichier déposé ici marque en général la clôture d'une session de travail.
 
@@ -75,36 +80,107 @@ Au début de la conversation (premier lancement du skill), procéder ainsi :
 
 ### 1. Inventaire
 
-Lister la racine du dossier de travail (noms + tailles). Ne rien ouvrir à ce stade.
+Lister la racine du dossier de travail (noms + tailles), ainsi que `output/` et `artifact/` s'ils existent. Ne rien ouvrir à ce stade.
 
-### 2a. Un fichier `contexte-{projet}.md` existe → reprise de session
+### 2. Identification des documents
 
-Le lire directement. Puis lister `output/` et `artifact/` pour croiser la section `## Progression` avec les fichiers réellement présents. Résumer à l'utilisateur l'état de la session (contexte, avancement, derniers livrables) et présenter les outils pertinents pour la suite. Ne rien relancer automatiquement.
+Classer ce qui est présent : le fichier de session (`progression.md`), les **fichiers sources** déposés par l'utilisateur, les fichiers déjà produits (`output/`, `artifact/`). Toujours sans rien ouvrir — l'identification se fait sur les noms, les extensions et les tailles.
 
-C'est le mécanisme de session du plugin : **tout travail peut être repris depuis une conversation vierge à partir du seul fichier de contexte et des fichiers produits.**
+### 3a. Un fichier `progression.md` existe → reprise de session
 
-### 2b. Pas de fichier de contexte → première session
+Le lire — c'est la source de vérité de la session. Lire ensuite `output/contexte.md` s'il existe, puis croiser la section `## Étapes` avec les fichiers réellement présents relevés à l'inventaire. En cas d'écart, se fier aux fichiers présents et le signaler. Résumer à l'utilisateur l'état de la session (projet, avancement, derniers livrables) et présenter les outils pertinents pour la suite. Ne rien relancer automatiquement.
+
+C'est le mécanisme de session du plugin : **tout travail peut être repris depuis une conversation vierge à partir de `progression.md` et des fichiers produits.**
+
+Cas particulier : si `progression.md` existe mais que `output/contexte.md` n'a pas encore été produit (étape non cochée, fichier absent), l'initialisation a été interrompue en cours. Ne pas relancer `context-initializer` — les résumés sont déjà là. Reprendre directement à l'étape 3b.2 en s'appuyant sur les résumés de `output/tmp/` et sur les précédents consignés dans `progression.md`.
+
+### 3b. Pas de `progression.md` → première session
 
 **D'abord, vérifier qu'il existe une matière première.** Si la racine ne contient aucun fichier source **et** que rien n'est joint à la conversation, ne **pas** lancer un questionnaire exhaustif pour reconstituer un cahier des charges à la main — ce n'est pas le point d'entrée prévu. Orienter l'utilisateur (voir le skill `propale-toolbox-help`, cas « espace de travail vierge ») : lui demander de **déposer un cahier des charges / appel d'offres / brief** à la racine de l'espace de travail, ou de **le joindre à la conversation**. Attendre cette matière avant de continuer.
 
 Une fois une source disponible :
 
-1. **Déléguer l'initialisation à l'agent `context-initializer`** (`${CLAUDE_PLUGIN_ROOT}/agents/context-initializer.md`) — un seul appel Agent, en lui passant les chemins des fichiers d'input, la racine de l'espace de travail et le nom du projet. Cet agent transversal, en contexte frais, lit et synthétise toutes les sources, crée `contexte-{projet}.md` (synthèse, 4 axes déduits, contexte deal), interroge `orkester-kb` pour repérer les projets / clients / secteurs similaires déjà traités par Orkester et consigne ces précédents dans le fichier. Il ne lit pas les gros fichiers dans le fil principal : c'est tout l'intérêt de la délégation. Il retourne un résumé court (synthèse des sources, axes déduits, précédents Orkester, champs restés `À compléter`).
-2. **Relayer ce résumé à l'utilisateur**, puis **poser quelques questions ciblées** uniquement sur les champs signalés `À compléter` par l'agent — en priorité les axes 1 (Type) et 4 (Contexte commercial). Ne rien redemander que les sources couvrent déjà. L'initialisation est le moment d'investir dans la qualité du contexte : ces échanges rendront tout le fil suivant plus pertinent.
-3. **Compléter `contexte-{projet}.md`** avec les réponses de l'utilisateur (le fichier existe déjà, seeded par l'agent) et cocher `- [x] Contexte finalisé avec l'utilisateur` dans la `## Progression`. C'est la seule écriture directe du fil principal sur le contexte, à l'initialisation.
-4. **Marquer un arrêt et rendre la main à l'utilisateur.** Une fois le contexte finalisé, l'initialisation est **terminée** : présenter brièvement l'état de la session et les outils disponibles, puis **demander à l'utilisateur ce qu'il veut faire**. Ne pas enchaîner sur la définition du fil rouge ni sur la génération de la trame. On peut *suggérer* la création de trame comme suite logique (« la suite naturelle serait de construire la trame — on y va ? »), mais c'est une suggestion, pas un démarrage : attendre le feu vert explicite.
+#### 3b.1 — Déléguer la lecture des sources à l'agent `context-initializer`
+
+Un seul appel Agent vers `${CLAUDE_PLUGIN_ROOT}/agents/context-initializer.md`, en lui passant les chemins des fichiers sources identifiés à l'étape 2, la racine de l'espace de travail et le nom du projet. En contexte frais, cet agent :
+
+- lit chaque source et en produit un **résumé structuré** dans `output/tmp/resume-{source}.md` — un fichier par source ;
+- interroge `orkester-kb` pour repérer les **projets / clients / secteurs similaires** déjà traités par Orkester ;
+- crée **`progression.md`** à la racine, qui ouvre la session.
+
+Il retourne un résumé court : ce qu'il a compris du projet en quelques lignes, la liste des résumés produits, **les précédents Orkester détaillés** et les points à clarifier avec l'utilisateur. C'est par ce résumé — et non par le fichier — que les précédents remontent au fil principal.
+
+#### 3b.2 — Relayer et proposer les précédents
+
+Restituer à l'utilisateur ce que le sous-agent a compris du projet, puis lui **présenter les projets passés comparables** remontés depuis `orkester-kb` : pour chacun, en quoi il ressemble à celui-ci et ce qu'on pourrait en réutiliser. Lui demander lesquels retenir comme appui — c'est lui qui tranche, il connaît l'historique réel des deals.
+
+#### 3b.3 — Produire `output/contexte.md` avec l'utilisateur
+
+C'est le cœur de l'initialisation : ce fichier devient le socle de tout ce qui sera produit ensuite. Il ne se contente pas de qualifier le projet selon des axes — il met au clair **la raison d'être du projet et la lecture qu'Orkester en fait**. C'est la base de la propale.
+
+- **Travailler depuis les résumés** de `output/tmp/` — les lire, ne jamais ouvrir les sources.
+- **Proposer une première version**, section par section (contexte, objectifs, enjeux, périmètre, précédents). Ne pas se contenter de reformuler les sources : formuler une lecture — pourquoi ce projet existe, ce qui se joue réellement pour le client, ce sur quoi la propale devra convaincre. Signaler explicitement les hypothèses et les zones d'ombre.
+- **Écouter l'utilisateur en priorité.** Il connaît le client, l'historique et le non-dit que les sources ne contiennent pas. Ses apports priment sur toute déduction faite depuis les résumés : quand il corrige, adopter sa version sans la renégocier. Poser des questions ciblées sur ce que les résumés ne couvrent pas, plutôt que de faire valider ligne à ligne ce qui est déjà établi.
+- **Consigner les précédents retenus** à l'étape précédente, avec ce qu'on compte en réutiliser.
+- **Confirmer les 4 axes** de qualification de la mission, proposés par le sous-agent : ils conditionnent la sélection des sections de la trame. Ne poser la question que sur les axes signalés comme hypothèse — en priorité les axes 1 (Type) et 4 (Contexte commercial).
+- **Itérer** jusqu'à ce que l'utilisateur valide, puis écrire le fichier. C'est un document co-écrit : Claude propose, l'utilisateur arbitre.
+
+#### 3b.4 — Mettre à jour `progression.md`
+
+Cocher `- [x] output/contexte.md produit avec l'utilisateur`, consigner les précédents retenus et les décisions structurantes prises pendant l'échange. C'est la seule écriture directe du fil principal sur `progression.md`, à l'initialisation.
+
+#### 3b.5 — Marquer un arrêt et rendre la main
+
+L'initialisation est **terminée** : présenter brièvement l'état de la session et les outils disponibles, puis **demander à l'utilisateur ce qu'il veut faire**. Ne pas enchaîner sur la définition du fil rouge ni sur la génération de la trame. On peut *suggérer* la création de trame comme suite logique (« la suite naturelle serait de construire la trame — on y va ? »), mais c'est une suggestion, pas un démarrage : attendre le feu vert explicite.
 
 Une demande d'ouverture large (« aide-moi à rédiger une propale pour ce projet ») autorise **l'initialisation seule**, pas le déroulé de tout le pipeline. Chaque outil suivant demande un accord distinct.
 
-Les mises à jour ultérieures du fichier de contexte (progression, enrichissements) sont le fait des sous-agents, au fil de leurs tâches.
+Les mises à jour ultérieures de `progression.md` (étapes, livrables) sont le fait des sous-agents, au fil de leurs tâches. `output/contexte.md` peut être enrichi plus tard, mais toujours avec l'utilisateur.
 
-## Format du fichier `contexte-{projet}.md`
+## Format des fichiers de session
+
+### `progression.md` — état de la session
+
+Créé par l'agent `context-initializer`, tenu à jour par les sous-agents au fil de leurs tâches.
 
 ```markdown
-# Contexte projet — {projet}
+# Progression — {projet}
+
+## Session
+- Projet : {projet}
+- Client : {client} — Secteur : {secteur}
+
+## Sources et résumés
+- {chemin de la source} — {description en une ligne} → `output/tmp/resume-{source}.md`
+
+## Précédents Orkester (base de connaissances)
+- {source propale_*.md} — comparable car ... — réutilisable : ...
+- Retenus avec l'utilisateur : ...
+
+## Décisions retenues
+- Fil rouge / promesse-signature : À définir
+- {arbitrages structurants pris avec l'utilisateur}
+
+## Étapes
+- [x] Sources lues et synthétisées — résumés dans `output/tmp/`
+- [x] Précédents Orkester recherchés
+- [ ] `output/contexte.md` produit avec l'utilisateur
+- [ ] Trame créée
+- [ ] Revue de trame effectuée
+
+## Livrables
+- {chemin} — {une ligne}
+```
+
+### `output/contexte.md` — socle de la propale
+
+Co-écrit par le fil principal et l'utilisateur à l'initialisation. Marquer `À confirmer` ce qui n'est pas tranché plutôt que de le deviner.
+
+```markdown
+# Contexte — {projet}
 
 ## Identification
-- Nom du projet : {projet}
+- Projet : {projet}
 - Client : {client} — Secteur : {secteur}
 
 ## Qualification de la mission (4 axes)
@@ -113,31 +189,23 @@ Les mises à jour ultérieures du fichier de contexte (progression, enrichisseme
 - Relation : {NOUVEAU_CLIENT|CLIENT_EXISTANT}
 - Contexte commercial : {APPEL_OFFRES|ECHANGE_DIRECT}
 
-## Contexte deal
-- Objectif de la propale : ...
-- Critères de décision du client : ...
-- Concurrence éventuelle : ...
-- Différenciateurs à mettre en avant : ...
-- Contraintes (budget, délai, ton, longueur) : ...
-- Fil rouge / promesse-signature : ...
+## Contexte
+{D'où part le client et ce qui l'amène à lancer ce projet : situation actuelle, existant technique et organisationnel, marché, historique de la relation avec Orkester. Un récit, pas une liste de faits.}
 
-## Précédents Orkester (base de connaissances)
-- Projets / clients / secteurs similaires déjà traités : ...
-- Propales gagnées réutilisables comme référence :
-  - {source propale_*.md} — comparable car ... — réutilisable : ...
+## Objectifs
+{Ce que le client veut atteindre, formulé de son point de vue. Des résultats attendus, pas des moyens.}
 
-## Fichiers sources
-- {chemin} — {description en une ligne}
+## Enjeux
+{Ce qui se joue derrière les objectifs : risques, tensions, contraintes fortes, critères de décision, concurrence, ce qui fera pencher la décision. C'est ici que se lit la compréhension qu'Orkester a du projet.}
 
-## Progression
-- [x] Sources lues et synthétisées
-- [x] Précédents Orkester recherchés
-- [ ] Contexte finalisé avec l'utilisateur
-- [ ] Trame créée
-- [ ] Revue de trame effectuée
+## Périmètre
+{Ce qui est dans le périmètre et ce qui n'y est pas : fonctionnalités, technos, volumétrie, délais, budget, phases. Marquer explicitement les zones non tranchées.}
+
+## Précédents Orkester
+- {source propale_*.md} — comparable car ... — ce qu'on en réutilise : ...
 ```
 
-Ce format est produit par l'agent `context-initializer` à l'initialisation ; la section `## Précédents Orkester` est renseignée depuis la recherche dans `orkester-kb`.
+Les 4 axes restent dans ce fichier : ils conditionnent la sélection des sections de la trame. Mais ils ne sont plus l'essentiel du document — le contenu des quatre sections rédigées l'est.
 
 ## Délégation aux sous-agents
 
@@ -148,8 +216,8 @@ Chaque tâche = un sous-agent en contexte frais. Deux mécanismes :
 
 Règles communes d'invocation :
 
-1. Transmettre des **chemins**, jamais du contenu collé — au minimum le chemin de `contexte-{projet}.md`, plus les chemins des fichiers d'entrée pertinents.
-2. Le sous-agent écrit ses fichiers aux bons emplacements (`output/tmp/`, `output/`, `artifact/`), met à jour la section `## Progression` du fichier de contexte, et retourne un résumé court (statut, chemins produits, points saillants, hypothèses posées).
+1. Transmettre des **chemins**, jamais du contenu collé — au minimum ceux de `output/contexte.md` et de `progression.md`, plus les chemins des fichiers d'entrée pertinents.
+2. Le sous-agent écrit ses fichiers aux bons emplacements (`output/tmp/`, `output/`, `artifact/`), met à jour `progression.md` (section `## Étapes` et `## Livrables`), et retourne un résumé court (statut, chemins produits, points saillants, hypothèses posées).
 3. Relayer ce résumé à l'utilisateur tel quel. Vérifier au besoin la présence des fichiers annoncés en listant l'espace de travail ; ne lire les fichiers produits que si un échange avec l'utilisateur nécessite des informations qu'ils contiennent.
 4. Des tâches indépendantes peuvent être lancées en parallèle (plusieurs appels Agent dans un même message).
 5. Ne jamais enchaîner automatiquement sur un outil suivant : présenter le résultat, suggérer la suite pertinente, attendre la demande de l'utilisateur.
@@ -172,15 +240,15 @@ Construit la trame de la propale à partir de la qualification de la mission (4 
 
 **Préalable — définir le fil rouge avec l'utilisateur, dans le fil principal.** Cette étape ne démarre **qu'une fois que l'utilisateur a choisi de construire la trame** — jamais automatiquement à la suite de l'initialisation. Le fil rouge est la colonne vertébrale narrative de la propale : il se décide avec l'utilisateur, jamais en aveugle dans un sous-agent. Une fois la trame demandée, avant de lancer l'outil :
 
-1. **Proposer** un fil rouge pertinent à partir du contexte projet complet (identification, 4 axes, contexte deal, différenciateurs, enjeux et critères de décision du client, fichiers sources). Le formuler comme une promesse-signature courte, mémorable et centrée sur le client.
+1. **Proposer** un fil rouge pertinent à partir de `output/contexte.md` (contexte, objectifs, enjeux, périmètre, précédents retenus) et, au besoin, des résumés de `output/tmp/`. Le formuler comme une promesse-signature courte, mémorable et centrée sur le client.
 2. **Le challenger** — ne pas s'arrêter à la première formulation. Le stress-tester : est-il différenciant (un concurrent pourrait-il dire exactement la même chose ?) ? répond-il aux critères de décision réels du client ? tient-il sur toute la propale ou seulement sur une partie ? est-il mémorable ? Proposer 2-3 variantes contrastées quand c'est utile et exposer les arbitrages.
 3. **Converger** avec l'utilisateur sur une formulation retenue.
 
-Ce travail est interactif et vit dans le fil principal — c'est l'un des rares échanges qui justifient d'y investir, car il conditionne toute la trame. Si le champ « Fil rouge / promesse-signature » du fichier contexte est déjà renseigné, partir de cette formulation pour la confirmer ou la challenger plutôt que repartir de zéro.
+Ce travail est interactif et vit dans le fil principal — c'est l'un des rares échanges qui justifient d'y investir, car il conditionne toute la trame. Si le champ « Fil rouge / promesse-signature » de `progression.md` est déjà renseigné, partir de cette formulation pour la confirmer ou la challenger plutôt que repartir de zéro.
 
 - **Mécanisme** : skill via `skill-executor` (le skill s'appuie sur `references/catalogue-sections.md`) — un seul appel Agent vers `skill-executor` en lui indiquant le skill `outline-generator`.
-- **Entrées à passer** : le **fil rouge retenu** (texte, formulé avec l'utilisateur) ; le chemin de `contexte-{projet}.md` ; la racine de l'espace de travail ; le nom du projet.
-- **Sorties** : `output/trame-{projet}-V{n}.md` (versionné, jamais écrasé) ; champ « Fil rouge / promesse-signature » et `## Progression` du contexte mis à jour.
+- **Entrées à passer** : le **fil rouge retenu** (texte, formulé avec l'utilisateur) ; le chemin de `output/contexte.md` ; le chemin de `progression.md` ; la racine de l'espace de travail ; le nom du projet.
+- **Sorties** : `output/trame-{projet}-V{n}.md` (versionné, jamais écrasé) ; champ « Fil rouge / promesse-signature », `## Étapes` et `## Livrables` de `progression.md` mis à jour.
 - **Retour** : un résumé court (sections retenues/écartées, hypothèses posées, chemin du fichier) — le relayer tel quel. Si l'agent remonte un blocage (axe 1 ou 4 indéductible), poser la question à l'utilisateur et relancer.
 
 ### Revue de trame — agent `trame-reviewer`
@@ -188,10 +256,10 @@ Ce travail est interactif et vit dans le fil principal — c'est l'un des rares 
 Revue critique indépendante d'une trame de propale selon 3 lentilles d'analyse (storytelling, cohérence, pertinence), menée par un seul agent qui produit directement le rapport final. À proposer quand une trame existe dans `output/` et que l'utilisateur demande une revue, un audit, un challenge de sa trame.
 
 - **Mécanisme** : agent dédié — un **seul appel Agent** vers `trame-reviewer` (`${CLAUDE_PLUGIN_ROOT}/agents/trame-reviewer.md`).
-- **Entrées à passer** (chemins uniquement) : chemin de la trame (`output/trame-{projet}-V{n}.md`), racine de l'espace de travail, chemin de `contexte-{projet}.md`, nom du projet.
-- **Sorties** : rapport final `output/revue-{projet}.md` ; `## Progression` du contexte mise à jour.
+- **Entrées à passer** (chemins uniquement) : chemin de la trame (`output/trame-{projet}-V{n}.md`), racine de l'espace de travail, chemin de `output/contexte.md`, chemin de `progression.md`, nom du projet.
+- **Sorties** : rapport final `output/revue-{projet}.md` ; `progression.md` mis à jour.
 - **Retour** : un résumé court (scores des 3 lentilles, verdict global, chemin du rapport) — le relayer tel quel à l'utilisateur.
 
 ## Fin de session
 
-Quand l'utilisateur indique que le travail est terminé (ou demande la version finale), déléguer à un sous-agent la consolidation des livrables de `output/` en un ou plusieurs fichiers finaux complets dans `artifact/`, avec mise à jour de `## Progression`. Relayer le résumé et les chemins produits.
+Quand l'utilisateur indique que le travail est terminé (ou demande la version finale), déléguer à un sous-agent la consolidation des livrables de `output/` en un ou plusieurs fichiers finaux complets dans `artifact/`, avec mise à jour de `progression.md`. Relayer le résumé et les chemins produits.

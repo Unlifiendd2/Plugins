@@ -2,13 +2,13 @@
 name: outline-generator
 description: >-
   Construit la trame sur-mesure d'une proposition commerciale (propale) Orkester à partir de la
-  qualification de la mission (4 axes) du fichier contexte : sélectionne les sections pertinentes
+  qualification de la mission (4 axes) de output/contexte.md : sélectionne les sections pertinentes
   depuis le catalogue de référence et les rassemble en groupes ordonnés autour du fil rouge fourni
   (défini en amont avec l'utilisateur), chaque groupe décrit par son contenu et son objectif.
   Produit une trame courte et synthétique output/trame-{nom-projet}-V{n}.md. Orchestré par le skill
   propale-toolbox (jamais invoqué directement) et exécuté à travers l'agent skill-executor, en lui
-  fournissant le fil rouge retenu, le chemin du fichier contexte-{projet}.md et la racine de
-  l'espace de travail.
+  fournissant le fil rouge retenu, les chemins de output/contexte.md et progression.md, et la
+  racine de l'espace de travail.
 ---
 
 # Trame de proposition commerciale Orkester
@@ -19,18 +19,18 @@ Orkester gagne ses propales en réutilisant un socle de sections récurrentes, m
 
 Ce skill produit une **trame courte et synthétique** : les sections retenues, rassemblées en groupes ordonnés qui racontent une histoire autour du client (storytelling customer-centric), le tout porté par le **fil rouge fourni en entrée** (défini en amont avec l'utilisateur dans le fil principal). Chaque groupe est décrit en quelques phrases — son contenu et son objectif dans le récit — sans entrer dans des consignes de rédaction détaillées. Le livrable est un **plan de lecture**, pas une propale rédigée. Il s'appuie sur le catalogue de référence `references/catalogue-sections.md`, qui décrit chaque section, sa raison d'être et sa condition d'inclusion.
 
-Ce skill s'exécute en contexte frais et non-interactif : toutes les informations projet viennent du fichier `contexte-{projet}.md` fourni dans le prompt d'invocation.
+Ce skill s'exécute en contexte frais et non-interactif : toutes les informations projet viennent de `output/contexte.md`, le socle de la propale co-écrit avec l'utilisateur, dont le chemin est fourni dans le prompt d'invocation. Ses sections `## Contexte`, `## Objectifs`, `## Enjeux`, `## Périmètre` et `## Précédents Orkester` sont la matière qui rend la trame spécifique à ce client — les lire avant de sélectionner quoi que ce soit. Si un détail manque, aller le chercher dans les résumés `output/tmp/resume-*.md` ; ne jamais ouvrir les fichiers sources bruts.
 
 ## Étape 1 — Récupérer la qualification de la mission (4 axes)
 
-La structure découle de quatre axes, lus dans la section `## Qualification de la mission` du fichier contexte :
+La structure découle de quatre axes, lus dans la section `## Qualification de la mission` de `output/contexte.md` :
 
 1. **Type de mission** — `BUILD` (nouveau projet, refonte, MVP, plateforme à concevoir) ou `RUN` (TMA, TME, reprise de site, maintenance/accompagnement). C'est l'axe le plus structurant. Un build peut inclure un volet maintenance/réversibilité en annexe (cas mixte).
 2. **Nature du produit** — `ECOM_B2B`, `ECOM_B2C` ou `APP_MOBILE`. Oriente le vocabulaire, l'architecture et les références à mettre en avant.
 3. **Relation client** — `NOUVEAU_CLIENT` (prospect) ou `CLIENT_EXISTANT`.
 4. **Contexte commercial** — `APPEL_OFFRES` (formel, concurrentiel) ou `ECHANGE_DIRECT` (suite à réunion).
 
-Si un axe est marqué `À compléter` ou absent, tenter de le déduire du reste du fichier contexte (contexte deal, fichiers sources décrits) et signaler l'hypothèse dans le résumé final. Les axes 1 et 4 changent radicalement le résultat : si l'un des deux est indéductible, c'est un **blocage** — renvoyer la raison et l'information manquante à l'agent invocateur sans produire de trame.
+Si un axe est marqué `À confirmer` ou absent, tenter de le déduire du reste de `output/contexte.md` (contexte, enjeux, périmètre) et signaler l'hypothèse dans le résumé final. Les axes 1 et 4 changent radicalement le résultat : si l'un des deux est indéductible, c'est un **blocage** — renvoyer la raison et l'information manquante à l'agent invocateur sans produire de trame.
 
 ## Étape 2 — Charger le catalogue
 
@@ -55,7 +55,7 @@ En cas de doute sur une section, préférer l'inclure dans son groupe en la sign
 
 ## Étape 4 — Regrouper et ordonner autour du fil rouge
 
-Le **fil rouge** — l'idée-force / promesse-signature qui traverse toute la propale — est **fourni dans le prompt d'invocation** : il a été défini et challengé avec l'utilisateur dans le fil principal. Le prendre tel quel comme colonne vertébrale du récit, sans le redéfinir ni le reformuler. En cas de repli (fil rouge absent du prompt), le reprendre depuis le champ « Fil rouge / promesse-signature » du fichier contexte ; s'il n'y figure pas non plus, le formuler depuis les enjeux du client et le signaler comme hypothèse forte dans le résumé final.
+Le **fil rouge** — l'idée-force / promesse-signature qui traverse toute la propale — est **fourni dans le prompt d'invocation** : il a été défini et challengé avec l'utilisateur dans le fil principal. Le prendre tel quel comme colonne vertébrale du récit, sans le redéfinir ni le reformuler. En cas de repli (fil rouge absent du prompt), le reprendre depuis le champ « Fil rouge / promesse-signature » de la section `## Décisions retenues` de `progression.md` ; s'il n'y figure pas non plus, le formuler depuis les enjeux du client et le signaler comme hypothèse forte dans le résumé final.
 
 **Regrouper** : rassembler les sections retenues en **groupes cohérents, le moins de groupes possible** (typiquement 5 à 8), chaque groupe portant une étape du récit (ex. « Votre enjeu, notre compréhension », « La vision produit », « Comment nous fabriquons », « Pourquoi nous faire confiance », « Cadre de la mission »…). Une section = un élément d'un groupe, jamais une entrée isolée de la trame, sauf si rien ne peut lui être rattaché.
 
@@ -67,7 +67,7 @@ Le **fil rouge** — l'idée-force / promesse-signature qui traverse toute la pr
 
 Générer `output/trame-{nom-projet}-V{n}.md` dans la racine de l'espace de travail (créer le dossier `output/` s'il n'existe pas). Pour le numéro de version `{n}`, lister les fichiers `output/trame-{nom-projet}-V*.md` existants et prendre le numéro suivant (V1 s'il n'y en a aucun — ne jamais écraser une version existante).
 
-Ce fichier contient uniquement la trame — la qualification vit dans le fichier contexte. La sortie est **courte et synthétique** : pas de codes de section, pas de consignes « À rédiger » détaillées. Restituer dans ce format :
+Ce fichier contient uniquement la trame — la qualification et le cadrage vivent dans `output/contexte.md`. La sortie est **courte et synthétique** : pas de codes de section, pas de consignes « À rédiger » détaillées. Restituer dans ce format :
 
 ```
 # Trame proposée — {nom-projet} V{n}
@@ -87,13 +87,13 @@ Ce fichier contient uniquement la trame — la qualification vit dans le fichier
 
 Les descriptions de groupes doivent rester **spécifiques** au cas — citer le client, le produit, le secteur — mais tenir en 2-3 phrases : la trame entière doit se lire d'un coup d'œil.
 
-Enfin, reporter le fil rouge retenu dans le champ « Fil rouge / promesse-signature » de la section `## Contexte deal` du fichier contexte s'il n'y figure pas déjà à l'identique — pour qu'une reprise de session le conserve.
+Enfin, reporter le fil rouge retenu dans le champ « Fil rouge / promesse-signature » de la section `## Décisions retenues` de `progression.md` s'il n'y figure pas déjà à l'identique — pour qu'une reprise de session le conserve.
 
 ## Quand consulter la base orkester-kb
 
 Par défaut, le catalogue suffit : **ne pas interroger la base de connaissance**. Y recourir uniquement si l'un de ces cas se présente :
 
-- une **ambiguïté** que les 4 axes ne lèvent pas (ex. type de produit hybride, périmètre flou entre build et reprise) et que le fichier contexte ne tranche pas ;
+- une **ambiguïté** que les 4 axes ne lèvent pas (ex. type de produit hybride, périmètre flou entre build et reprise) et que `output/contexte.md` ne tranche pas ;
 - un **scénario non couvert** par le catalogue (ex. mission de conseil pur, audit, cadrage seul, formation, produit d'un secteur inhabituel) pour lequel il faut vérifier comment Orkester a structuré une propale comparable.
 
 Dans ce cas, utiliser les outils MCP `orkester-kb` : `search_kb_semantic` ou `search_kb_hybrid` pour retrouver des passages pertinents des propales gagnées (sources `propale_*.md`), puis `get_full_document` pour récupérer la structure complète d'une propale proche. En extraire les sections manquantes, les intégrer à la trame, et signaler dans le résumé final qu'elles proviennent d'un cas réel hors catalogue.
