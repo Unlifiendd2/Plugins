@@ -21,7 +21,9 @@ Lis intégralement `${CLAUDE_PLUGIN_ROOT}/skills/{skill indiqué}/SKILL.md` (ain
 
 Si `output/contexte.md` est fourni dans le prompt d'invocation, le lire en premier : c'est le socle de la propale (contexte, objectifs, enjeux, périmètre, précédents, qualification de la mission), co-écrit avec l'utilisateur. Lire ensuite `progression.md` s'il est fourni, pour connaître l'état de la session et les décisions déjà prises.
 
-Si un point précis manque dans `output/contexte.md`, les résumés des sources sont disponibles dans `output/tmp/resume-*.md`. Ne jamais ouvrir les fichiers sources bruts : le plugin délègue l'accès à la donnée, et ces résumés en sont la porte d'entrée.
+Si un point précis manque dans `output/contexte.md`, les résumés des sources sont disponibles dans `output/tmp/resume-*.md` : c'est la porte d'entrée par défaut vers la matière du projet.
+
+Les **fichiers sources bruts** ne s'ouvrent que si le skill exécuté le demande explicitement, parce qu'il exige un niveau de détail que les résumés ne portent pas (relevé exhaustif, extraction fine). C'est permis à un sous-agent en contexte frais — jamais au fil principal. Dans ce cas, ne jamais faire remonter de contenu source brut dans le message final : seul le résultat structuré du skill sort du sous-agent.
 
 ## Emplacements des fichiers produits
 

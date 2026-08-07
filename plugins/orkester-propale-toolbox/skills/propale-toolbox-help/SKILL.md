@@ -27,9 +27,10 @@ Le plugin aide un project owner Orkester à construire une proposition commercia
 
 1. **Démarrer** — ouvrir une conversation dans le dossier de travail (idéalement avec les fichiers sources : cahier des charges, AO, notes, à la racine). Le skill `propale-toolbox` s'initialise : il inventorie l'espace de travail et identifie les documents présents. S'il trouve un `progression.md`, c'est une reprise de session. Sinon, en première session, il délègue à l'agent `context-initializer` qui lit les sources, écrit un **résumé par source** dans `output/tmp/`, cherche dans `orkester-kb` les projets/clients/secteurs déjà traités par Orkester, et crée `progression.md`.
 2. **Cadrer** — l'orchestrateur relaie ce que le sous-agent a compris, **présente les précédents Orkester** et demande lesquels retenir, puis construit `output/contexte.md` **avec l'utilisateur** : contexte, objectifs, enjeux, périmètre, précédents. C'est le socle de la propale — le moment où l'on met au clair la raison d'être du projet et la lecture qu'Orkester en fait.
-3. **Structurer** — définir le fil rouge avec l'orchestrateur (proposé puis challengé), puis lancer `outline-generator` pour produire la trame (`output/trame-{projet}-V{n}.md`).
-4. **Réviser** — lancer `trame-reviewer` pour une revue critique 3 lentilles (`output/revue-{projet}.md`), itérer sur la trame si besoin (nouvelle version V{n+1}).
-5. **Consolider** — en fin de session, déléguer la consolidation des livrables de `output/` vers un fichier final dans `artifact/`.
+3. **Délimiter** — lancer `functional-coverage` pour décomposer les sources en fonctions à réaliser, regroupées par brique (`output/couverture-fonctionnelle-{projet}-V{n}.md`). C'est la base du chiffrage. Étape indépendante de la trame : l'une ou l'autre peut venir en premier.
+4. **Structurer** — définir le fil rouge avec l'orchestrateur (proposé puis challengé), puis lancer `outline-generator` pour produire la trame (`output/trame-{projet}-V{n}.md`).
+5. **Réviser** — lancer `trame-reviewer` pour une revue critique 3 lentilles (`output/revue-{projet}.md`), itérer sur la trame si besoin (nouvelle version V{n+1}).
+6. **Consolider** — en fin de session, déléguer la consolidation des livrables de `output/` vers un fichier final dans `artifact/`.
 
 À chaque étape, l'orchestrateur présente le résultat et **suggère** la suite sans jamais l'enchaîner automatiquement : c'est l'utilisateur qui décide de l'outil suivant.
 
@@ -37,10 +38,17 @@ Le plugin aide un project owner Orkester à construire une proposition commercia
 
 | Outil | Rôle | Mécanisme | Sortie |
 |---|---|---|---|
+| `functional-coverage` (skill) | Décompose les sources en fonctions à réaliser, par brique de la solution — base du chiffrage | via `skill-executor` | `output/couverture-fonctionnelle-{projet}-V{n}.md` |
 | `outline-generator` (skill) | Construit la trame synthétique (fil rouge + groupes de sections) | via `skill-executor` | `output/trame-{projet}-V{n}.md` |
 | `trame-reviewer` (agent) | Revue critique 3 lentilles : storytelling, cohérence, pertinence | appel Agent direct | `output/revue-{projet}.md` |
 
-Outils prévus (feuille de route) : rédaction de sections. Pour toute tâche non couverte, l'orchestrateur délègue à un sous-agent générique avec un prompt complet.
+Outils prévus (feuille de route) : chiffrage, rédaction de sections. Pour toute tâche non couverte, l'orchestrateur délègue à un sous-agent générique avec un prompt complet.
+
+### Le grain de la couverture fonctionnelle
+
+`functional-coverage` vise **la fonction** — ni l'epic (trop large : c'est la brique), ni la user story (trop fine : c'est un détail de la fonction). Une fonction est une capacité autonome, nommée par un groupe nominal de 2 à 5 mots (« Génération de facture », « Vérification de SIRET »), qu'on peut chiffrer d'un bloc. Compter 8 à 20 fonctions par brique applicative, 2 à 6 par service tiers.
+
+Les répétitions entre briques sont voulues : « Authentification » sur le portail et sur le back-office, ce sont deux charges. Les fonctions *(déduite)* — nécessaires mais non demandées — doivent être validées par le client avant d'entrer dans un chiffrage.
 
 ## Le principe central — fil principal propre, délégation systématique
 
@@ -55,6 +63,7 @@ Outils prévus (feuille de route) : rédaction de sections. Pour toute tâche no
 - Leur lecture est déléguée à `context-initializer`, qui écrit **un résumé structuré par source** dans `output/tmp/resume-{source}.md` : points clés, contexte, objectifs, périmètre, contraintes, critères de décision, chiffres et dates, citations utiles, zones d'ombre.
 - **Ces résumés sont la matière de travail du fil principal** : c'est à partir d'eux que Claude construit sa compréhension du projet et propose le contenu de `output/contexte.md`. Les sous-agents s'en servent aussi quand `output/contexte.md` ne tranche pas un point.
 - Une source arrivée en cours de session suit la même règle : déléguer sa lecture, puis travailler à partir du résumé.
+- **La règle vise le fil principal, pas les sous-agents.** Un sous-agent en contexte frais peut ouvrir les sources quand sa tâche exige un détail que les résumés ne portent pas — c'est le cas de `functional-coverage`, qui doit établir un relevé exhaustif. Il ne fait jamais remonter de contenu brut : seul son résultat structuré sort du sous-agent.
 
 ## Le système de session
 
@@ -75,6 +84,7 @@ Les axes ne sont pas l'essentiel de `output/contexte.md` : ils qualifient la mis
 orkester-propale-toolbox/
 ├── skills/
 │   ├── propale-toolbox/     # Orchestrateur, point d'entrée (fil principal)
+│   ├── functional-coverage/ # Couverture fonctionnelle (+ references/repertoire-fonctions.md)
 │   ├── outline-generator/   # Création de trame (+ references/catalogue-sections.md)
 │   └── propale-toolbox-help/ # Ce skill de documentation
 └── agents/

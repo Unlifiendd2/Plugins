@@ -115,6 +115,7 @@ Créer `progression.md` à la racine de l'espace de travail, selon ce format exa
 - [x] Sources lues et synthétisées — résumés dans `output/tmp/`
 - [x] Précédents Orkester recherchés
 - [ ] `output/contexte.md` produit avec l'utilisateur
+- [ ] Couverture fonctionnelle établie
 - [ ] Trame créée
 - [ ] Revue de trame effectuée
 

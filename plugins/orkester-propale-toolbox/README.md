@@ -5,7 +5,7 @@ Boîte à outils Orkester pour la construction de propositions commerciales (pro
 ## Principes
 
 - **Fil principal minimal** — l'orchestrateur `propale-toolbox` délègue toute production de fichiers aux sous-agents et relaie leurs résumés. Il ne lit les fichiers produits que quand un échange avec l'utilisateur nécessite des informations qu'ils contiennent.
-- **Délégation de l'accès à la donnée** — le fil principal ne lit **jamais** les fichiers sources déposés par l'utilisateur, quels que soient leur taille et leur format. Un sous-agent en produit un résumé structuré par source dans `output/tmp/` ; c'est sur ces résumés que Claude construit sa compréhension du projet.
+- **Délégation de l'accès à la donnée** — le fil principal ne lit **jamais** les fichiers sources déposés par l'utilisateur, quels que soient leur taille et leur format. Un sous-agent en produit un résumé structuré par source dans `output/tmp/` ; c'est sur ces résumés que Claude construit sa compréhension du projet. Les sous-agents, eux, peuvent ouvrir les sources quand leur tâche exige un relevé exhaustif.
 - **Système de session** — `progression.md` à la racine de l'espace de travail est la source de vérité. Une session peut être reprise depuis une conversation vierge à partir de ce seul fichier et des fichiers produits.
 - **Socle de la propale** — `output/contexte.md` (contexte, objectifs, enjeux, périmètre, précédents) met au clair la raison d'être du projet et la lecture qu'Orkester en fait. Il est co-écrit par Claude et l'utilisateur, et sert de base à tous les livrables suivants.
 - **Deux mécanismes de délégation** — agent dédié pour le cas général ; `skill-executor` uniquement quand la tâche a besoin de la structure d'un skill (références, scripts, assets).
@@ -33,6 +33,10 @@ orkester-propale-toolbox/
 ├── skills/
 │   ├── propale-toolbox/
 │   │   └── SKILL.md              # Point d'entrée : orchestrateur de session
+│   ├── functional-coverage/
+│   │   ├── SKILL.md              # Couverture fonctionnelle → output/couverture-fonctionnelle-{projet}-V{n}.md
+│   │   └── references/
+│   │       └── repertoire-fonctions.md # Répertoire des fonctions récurrentes (A à O)
 │   ├── outline-generator/
 │   │   ├── SKILL.md              # Création de trame → output/trame-{projet}-V{n}.md
 │   │   └── references/
@@ -49,6 +53,8 @@ orkester-propale-toolbox/
 ## Feuille de route
 
 - [x] Skill point d'entrée `propale-toolbox` (orchestration, sessions, initialisation)
+- [x] Couverture fonctionnelle — skill `functional-coverage` (via `skill-executor`)
 - [x] Création de trame sur mesure — skill `outline-generator` (via `skill-executor`)
 - [x] Revue de trame 3 lentilles (storytelling, cohérence, pertinence) — agent `trame-reviewer`
+- [ ] Chiffrage à partir de la couverture fonctionnelle
 - [ ] Rédaction de sections

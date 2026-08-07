@@ -165,6 +165,7 @@ Créé par l'agent `context-initializer`, tenu à jour par les sous-agents au fi
 - [x] Sources lues et synthétisées — résumés dans `output/tmp/`
 - [x] Précédents Orkester recherchés
 - [ ] `output/contexte.md` produit avec l'utilisateur
+- [ ] Couverture fonctionnelle établie
 - [ ] Trame créée
 - [ ] Revue de trame effectuée
 
@@ -226,13 +227,28 @@ Si un sous-agent remonte un blocage (information clé manquante), poser la quest
 
 ## Outils disponibles
 
-La boîte à outils se remplit progressivement ; chaque outil ajouté au plugin est documenté ici (quoi, quand, quel mécanisme d'invocation, quelles entrées, quelles sorties). Outils prévus : rédaction de sections.
+La boîte à outils se remplit progressivement ; chaque outil ajouté au plugin est documenté ici (quoi, quand, quel mécanisme d'invocation, quelles entrées, quelles sorties). Outils prévus : chiffrage, rédaction de sections.
 
 Si l'utilisateur demande une tâche non couverte, la déléguer à un sous-agent générique avec un prompt complet, en respectant les règles de délégation ci-dessus.
 
 **Avant de lancer un outil, vérifier ses prérequis** (contexte initialisé, entrées nécessaires présentes). Si l'utilisateur demande un livrable alors que les prérequis manquent — typiquement une trame sur un espace de travail vierge, sans cahier des charges ni brief — ne **pas** compenser par un questionnaire exhaustif ni deviner : orienter l'utilisateur vers la fourniture de la matière première (déposer une source à la racine ou la joindre à la conversation), comme à l'initialisation. Le skill `propale-toolbox-help` détaille la conduite à tenir.
 
 Si l'utilisateur pose une question sur le plugin lui-même (fonctionnement, outils, sessions, dépannage, bonnes pratiques) plutôt que de demander une action, ou si Claude peine à réaliser une tâche / sort du périmètre prévu, s'appuyer sur le skill `propale-toolbox-help` qui centralise toute la documentation de référence.
+
+### Couverture fonctionnelle — skill `functional-coverage`
+
+Décompose les documents sources en **fonctions à réaliser**, regroupées par brique de la solution (applications, services tiers intégrés, socle technique, reprise). Le grain visé n'est ni l'epic ni la user story : la fonction — une capacité autonome, nommée par un groupe nominal court, chiffrable d'un bloc. Le livrable est un document plat et présentable au client, qui sert de **base au chiffrage** : chaque ligne est une charge à estimer.
+
+À proposer une fois `output/contexte.md` produit, quand l'utilisateur veut arrêter le périmètre de réalisation ou préparer l'estimation budgétaire. Indépendant de la trame — les deux découlent du contexte et peuvent être menés dans n'importe quel ordre.
+
+- **Mécanisme** : skill via `skill-executor` (le skill s'appuie sur `references/repertoire-fonctions.md`) — un seul appel Agent vers `skill-executor` en lui indiquant le skill `functional-coverage`.
+- **Entrées à passer** : le chemin de `output/contexte.md` ; le chemin de `progression.md` ; **les chemins des fichiers sources** ; la racine de l'espace de travail ; le nom du projet. Cet outil est le seul à avoir besoin des sources : établir une couverture exhaustive demande le détail que les résumés n'ont pas vocation à porter. Le sous-agent les lit en contexte frais — le fil principal ne les ouvre jamais.
+- **Sorties** : `output/couverture-fonctionnelle-{projet}-V{n}.md` (versionné, jamais écrasé) ; `## Étapes` et `## Livrables` de `progression.md` mis à jour.
+- **Retour** : un résumé court (briques identifiées et nombre de fonctions par brique, fonctions déduites, exclusions, zones d'ombre) — le relayer tel quel.
+
+**Itérer plutôt que corriger à la main.** L'utilisateur va presque toujours amender la couverture — il connaît des fonctions que les sources ne portent pas et sait ce qui a été dit au client. Recueillir ses retours dans le fil principal, puis **relancer l'outil** avec ces retours pour produire une V{n+1}. Ne pas éditer le fichier depuis le fil principal.
+
+Porter une attention particulière aux fonctions marquées *(déduite)* : elles portent une charge que le client n'a pas demandée. Les faire valider explicitement avant qu'elles n'entrent dans un chiffrage.
 
 ### Création de trame sur mesure — skill `outline-generator`
 
