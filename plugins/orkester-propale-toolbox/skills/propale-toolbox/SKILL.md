@@ -41,7 +41,7 @@ Lancer un agent spécialisé directement court-circuite le chargement du context
 
 Le fonctionnement par défaut :
 
-- La création et la modification des fichiers de travail sont **toujours déléguées aux sous-agents**. Le fil principal n'écrit lui-même que les deux fichiers de pilotage de la session : `output/contexte.md`, co-produit avec l'utilisateur à l'initialisation, et les mises à jour de `progression.md` qui en découlent. Seule autre exception, encadrée : les retouches dictées par l'utilisateur sur la couverture fonctionnelle (voir l'outil `functional-coverage`).
+- La création et la modification des fichiers de travail sont **toujours déléguées aux sous-agents**. Le fil principal n'écrit lui-même que trois choses : `output/contexte.md` — co-produit avec l'utilisateur à l'initialisation, puis tenu à jour quand une décision aval touche le socle (§ Cohérence du socle) ; `progression.md` — étapes, décisions retenues, livrables ; et les retouches dictées par l'utilisateur sur la couverture fonctionnelle (voir l'outil `functional-coverage`). Ces trois exceptions ont un point commun : elles se décident **avec** l'utilisateur, dans le fil, et n'ont rien à gagner à partir en contexte frais.
 - Les sous-agents retournent un **résumé court** de leur travail (statut, chemins produits, points saillants) — c'est ce résumé qui est relayé à l'utilisateur. Le fil principal n'a pas besoin de lire les fichiers produits pour en rendre compte.
 - **Lister l'espace de travail** (noms, tailles, dates) est toujours permis : vérifier l'état, lever une ambiguïté sur un chemin, confirmer qu'un sous-agent a bien produit ce qu'il annonce.
 
@@ -88,7 +88,7 @@ Classer ce qui est présent : le fichier de session (`progression.md`), les **fi
 
 ### 3a. Un fichier `progression.md` existe → reprise de session
 
-Le lire — c'est la source de vérité de la session. Lire ensuite `output/contexte.md` s'il existe, puis croiser la section `## Étapes` avec les fichiers réellement présents relevés à l'inventaire. En cas d'écart, se fier aux fichiers présents et le signaler. Résumer à l'utilisateur l'état de la session (projet, avancement, derniers livrables) et présenter les outils pertinents pour la suite. Ne rien relancer automatiquement.
+Le lire — c'est la source de vérité de la session. Lire ensuite `output/contexte.md` s'il existe, puis croiser la section `## Étapes` avec les fichiers réellement présents relevés à l'inventaire. En cas d'écart, se fier aux fichiers présents et le signaler. Vérifier aussi `## Décisions retenues` : toute décision sans la marque `→ socle mis à jour` doit être répercutée dans le socle avant de relancer un outil (voir § Cohérence du socle). Résumer à l'utilisateur l'état de la session (projet, avancement, derniers livrables) et présenter les outils pertinents pour la suite. Ne rien relancer automatiquement.
 
 C'est le mécanisme de session du plugin : **tout travail peut être repris depuis une conversation vierge à partir de `progression.md` et des fichiers produits.**
 
@@ -158,8 +158,12 @@ Créé par l'agent `context-initializer`, tenu à jour par les sous-agents au fi
 - Retenus avec l'utilisateur : ...
 
 ## Décisions retenues
+> Toute décision structurante prise avec l'utilisateur se consigne ici, suivie de `→ socle mis à jour`
+> une fois répercutée dans `output/contexte.md`. Une décision sans cette marque bloque le lancement
+> des outils qui consomment le socle.
 - Fil rouge / promesse-signature : À définir
-- {arbitrages structurants pris avec l'utilisateur}
+- Schéma de regroupement de la couverture fonctionnelle : À définir
+- {décision structurante} → socle mis à jour
 
 ## Étapes
 - [x] Sources lues et synthétisées — résumés dans `output/tmp/`
@@ -208,6 +212,34 @@ Co-écrit par le fil principal et l'utilisateur à l'initialisation. Marquer `À
 
 Les 4 axes restent dans ce fichier : ils conditionnent la sélection des sections de la trame. Mais ils ne sont plus l'essentiel du document — le contenu des quatre sections rédigées l'est.
 
+## Cohérence du socle — propager les décisions vers `output/contexte.md`
+
+`output/contexte.md` est le socle dont dépendent tous les livrables suivants. Mais les décisions structurantes se prennent **en aval** : en établissant la couverture fonctionnelle, on tranche un périmètre ; en construisant la trame, on arbitre un angle ; en relisant une revue, on renonce à une ambition. Sans réflexe de propagation, le socle se périme silencieusement et l'outil suivant travaille sur une base fausse.
+
+### Le réflexe — après chaque livrable
+
+Après avoir relayé le résumé d'un sous-agent et recueilli les réactions de l'utilisateur, se poser une question, systématiquement : **est-ce que ce qui vient d'être décidé contredit ou dépasse `output/contexte.md` ?** Les déclencheurs les plus fréquents :
+
+- **Périmètre** — une fonction ou une brique entière passe hors périmètre, ou s'ajoute ; une phase est repoussée. Le socle dit autre chose.
+- **Objectifs / enjeux** — l'échange fait émerger un enjeu que le socle ne portait pas, ou en dégonfle un.
+- **Qualification** — un des 4 axes se révèle faux (un `BUILD` qui est en réalité une reprise, un `ECHANGE_DIRECT` qui devient un AO).
+- **Contraintes** — un budget, une échéance, une exigence apparaissent ou se précisent.
+- **Précédents** — un précédent retenu se révèle inadapté, ou un autre s'impose.
+
+Si l'un de ces cas se présente : le dire à l'utilisateur en une phrase (« cette exclusion change le périmètre du socle — je le mets à jour ? »), appliquer la mise à jour dans `output/contexte.md` après son accord, et consigner la décision dans `## Décisions retenues` de `progression.md` en la marquant `→ socle mis à jour`. C'est l'un des rares cas où le fil principal écrit un fichier de travail : le socle est co-écrit avec l'utilisateur, il ne se délègue pas.
+
+Ne pas propager une hypothèse de travail ni une préférence exprimée en passant — seulement ce qui est tranché.
+
+### Le contrôle — avant chaque outil qui consomme le socle
+
+Avant de lancer un outil qui lit `output/contexte.md` — `outline-generator`, `trame-reviewer`, toute rédaction — vérifier dans `## Décisions retenues` de `progression.md` qu'aucune décision n'est restée sans la marque `→ socle mis à jour`. S'il en reste :
+
+1. Le signaler à l'utilisateur, en nommant la décision et la section du socle qu'elle touche.
+2. Mettre le socle à jour avec lui.
+3. Puis seulement lancer l'outil.
+
+Lancer une trame sur un socle périmé produit un livrable qu'il faudra refaire — le coût du contrôle est sans commune mesure avec celui de l'oubli. Même contrôle à la reprise d'une session : `## Décisions retenues` est lu en même temps que `## Étapes`.
+
 ## Délégation aux sous-agents
 
 Chaque tâche = un sous-agent en contexte frais. Deux mécanismes :
@@ -241,12 +273,22 @@ Décompose les documents sources en **fonctions à réaliser**, regroupées par 
 
 À proposer une fois `output/contexte.md` produit, quand l'utilisateur veut arrêter le périmètre de réalisation ou préparer l'estimation budgétaire. Indépendant de la trame — les deux découlent du contexte et peuvent être menés dans n'importe quel ordre.
 
-- **Mécanisme** : skill via `skill-executor` (le skill s'appuie sur `references/repertoire-fonctions.md`) — un seul appel Agent vers `skill-executor` en lui indiquant le skill `functional-coverage`.
-- **Entrées à passer** : le chemin de `output/contexte.md` ; le chemin de `progression.md` ; **les chemins des fichiers sources** ; la racine de l'espace de travail ; le nom du projet. Cet outil est le seul à avoir besoin des sources : établir une couverture exhaustive demande le détail que les résumés n'ont pas vocation à porter. Le sous-agent les lit en contexte frais — le fil principal ne les ouvre jamais.
-- **Sorties** : `output/couverture-fonctionnelle-{projet}-V{n}.md` (versionné, jamais écrasé) ; `## Étapes` et `## Livrables` de `progression.md` mis à jour.
-- **Retour** : un résumé court (briques identifiées et nombre de fonctions par brique, fonctions déduites, exclusions, zones d'ombre) — le relayer tel quel.
+**Préalable — arrêter le schéma de regroupement avec l'utilisateur, dans le fil principal.** Le découpage en briques conditionne toute la lisibilité du document, et le corriger après coup impose de tout régénérer pour un arbitrage qui se tranche en une question. Il se décide donc **avant** de lancer l'outil, à partir des résumés de `output/tmp/` — pas des sources. Deux points à faire valider :
 
-Porter une attention particulière aux fonctions marquées *(déduite)* : elles portent une charge que le client n'a pas demandée. Les faire valider explicitement avant qu'elles n'entrent dans un chiffrage.
+1. **L'axe de regroupement.** Proposer celui qui colle au projet et l'assumer, en mentionnant les autres en une ligne :
+   - *par brique technique* — une brique par application ou interface, plus une par service tiers intégré, plus socle et reprise. Le défaut, celui qui parle aux équipes de réalisation ;
+   - *par module fonctionnel* — une brique par domaine métier, toutes interfaces confondues. Pour une solution mono-application ou un client qui raisonne par domaine ;
+   - *par lot de chiffrage* — les briques épousent la structure du devis, des phases ou des lots de l'AO. Quand le client impose un format de réponse.
+2. **Le grain.** Annoncer la liste pressentie des briques et leur nombre. Viser **5 à 10 briques** ; au-delà de 12, on confond brique et fonction. Rappeler qu'un parcours cohérent — un tunnel d'achat — est **une** brique, pas six.
+
+Un échange court : proposer, laisser l'utilisateur ajuster ou fusionner, puis lancer. Consigner le schéma retenu dans `## Décisions retenues` de `progression.md`.
+
+- **Mécanisme** : skill via `skill-executor` (le skill s'appuie sur `references/repertoire-fonctions.md`) — un seul appel Agent vers `skill-executor` en lui indiquant le skill `functional-coverage`.
+- **Entrées à passer** : le **schéma de regroupement retenu** (axe, liste des briques pressenties, nombre visé) ; le chemin de `output/contexte.md` ; le chemin de `progression.md` ; **les chemins des fichiers sources** ; la racine de l'espace de travail ; le nom du projet. Cet outil est le seul à avoir besoin des sources : établir une couverture exhaustive demande le détail que les résumés n'ont pas vocation à porter. Le sous-agent les lit en contexte frais — le fil principal ne les ouvre jamais.
+- **Sorties** : `output/couverture-fonctionnelle-{projet}-V{n}.md` (versionné, jamais écrasé) — un tableau par brique, une ligne par fonction, chaque ligne portant une référence (`PORT-01`), un statut et d'éventuelles précisions de chiffrage ; `## Étapes` et `## Livrables` de `progression.md` mis à jour.
+- **Retour** : un résumé court (briques retenues et nombre de fonctions par brique, fonctions déduites, exclusions, zones d'ombre, écarts éventuels au schéma demandé) — le relayer tel quel.
+
+Porter une attention particulière aux fonctions de statut `Déduite` : elles portent une charge que le client n'a pas demandée. Les faire valider explicitement avant qu'elles n'entrent dans un chiffrage. De même, les `À confirmer` doivent être tranchées avant tout chiffrage.
 
 #### Amender la couverture — qui fait quoi
 
@@ -254,13 +296,13 @@ L'utilisateur va presque toujours amender la couverture : il connaît des foncti
 
 **L'orchestrateur édite directement le fichier** quand l'utilisateur *dicte le résultat* et que tout se joue à l'intérieur de la couverture :
 
-- ajouter, retirer ou renommer une fonction qu'il désigne ;
+- ajouter, retirer ou renommer une fonction qu'il désigne (par sa référence : « retire PORT-07 ») ;
 - déplacer une fonction d'une brique à l'autre ;
-- changer un statut (lever un *(à confirmer)*, valider une *(déduite)*, basculer une fonction en hors périmètre) ;
-- renommer, fusionner, scinder ou réordonner des briques, réorganiser les listes ;
-- corriger une formulation, une coquille, une ligne des sections de fin.
+- changer une valeur de la colonne `Statut` (passer une `À confirmer` en `Explicite`, valider une `Déduite`), ou basculer une fonction vers la table « Hors périmètre » ;
+- renommer, fusionner, scinder ou réordonner des briques, réordonner les lignes ;
+- compléter ou corriger une cellule de précisions, une formulation, une coquille, une ligne des tables de fin.
 
-Ces retouches se font **sur place**, sans changer le numéro de version : V{n} reste V{n}.
+Ces retouches se font **sur place**, sans changer le numéro de version : V{n} reste V{n}. Après un déplacement ou une fusion, réattribuer les références de la brique touchée pour qu'elles restent cohérentes et uniques.
 
 **Déléguer à `skill-executor` pour une nouvelle version V{n+1}** dès que la demande engage un jugement, une planification, ou la moindre lecture hors de la couverture :
 

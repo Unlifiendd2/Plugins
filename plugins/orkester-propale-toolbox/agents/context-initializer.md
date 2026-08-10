@@ -117,7 +117,11 @@ Créer `progression.md` à la racine de l'espace de travail, selon ce format exa
 - Retenus avec l'utilisateur : À compléter
 
 ## Décisions retenues
+> Toute décision structurante prise avec l'utilisateur se consigne ici, suivie de `→ socle mis à jour`
+> une fois répercutée dans `output/contexte.md`. Une décision sans cette marque bloque le lancement
+> des outils qui consomment le socle.
 - Fil rouge / promesse-signature : À définir
+- Schéma de regroupement de la couverture fonctionnelle : À définir
 
 ## Étapes
 - [x] Sources lues et synthétisées — résumés dans `output/tmp/`

@@ -27,7 +27,7 @@ Le plugin aide un project owner Orkester à construire une proposition commercia
 
 1. **Démarrer** — ouvrir une conversation dans le dossier de travail (idéalement avec les fichiers sources : cahier des charges, AO, notes, à la racine). Le skill `propale-toolbox` s'initialise : il inventorie l'espace de travail et identifie les documents présents. S'il trouve un `progression.md`, c'est une reprise de session. Sinon, en première session, il délègue à l'agent `context-initializer` qui lit les sources, écrit un **résumé par source** dans `output/tmp/`, cherche dans `orkester-kb` les projets/clients/secteurs déjà traités par Orkester, et crée `progression.md`.
 2. **Cadrer** — l'orchestrateur relaie ce que le sous-agent a compris, **présente les précédents Orkester** et demande lesquels retenir, puis construit `output/contexte.md` **avec l'utilisateur** : contexte, objectifs, enjeux, périmètre, précédents. C'est le socle de la propale — le moment où l'on met au clair la raison d'être du projet et la lecture qu'Orkester en fait.
-3. **Délimiter** — lancer `functional-coverage` pour décomposer les sources en fonctions à réaliser, regroupées par brique (`output/couverture-fonctionnelle-{projet}-V{n}.md`). C'est la base du chiffrage. Étape indépendante de la trame : l'une ou l'autre peut venir en premier.
+3. **Délimiter** — arrêter le schéma de regroupement avec l'orchestrateur (axe et nombre de briques), puis lancer `functional-coverage` pour décomposer les sources en fonctions à réaliser (`output/couverture-fonctionnelle-{projet}-V{n}.md`). Un tableau, une ligne par fonction : c'est la base du chiffrage. Étape indépendante de la trame : l'une ou l'autre peut venir en premier.
 4. **Structurer** — définir le fil rouge avec l'orchestrateur (proposé puis challengé), puis lancer `outline-generator` pour produire la trame (`output/trame-{projet}-V{n}.md`).
 5. **Réviser** — lancer `trame-reviewer` pour une revue critique 3 lentilles (`output/revue-{projet}.md`), itérer sur la trame si besoin (nouvelle version V{n+1}).
 6. **Consolider** — en fin de session, déléguer la consolidation des livrables de `output/` vers un fichier final dans `artifact/`.
@@ -38,7 +38,7 @@ Le plugin aide un project owner Orkester à construire une proposition commercia
 
 | Outil | Rôle | Mécanisme | Sortie |
 |---|---|---|---|
-| `functional-coverage` (skill) | Décompose les sources en fonctions à réaliser, par brique de la solution — base du chiffrage | via `skill-executor` | `output/couverture-fonctionnelle-{projet}-V{n}.md` |
+| `functional-coverage` (skill) | Décompose les sources en un tableau de fonctions à réaliser, par brique — base du chiffrage | via `skill-executor` | `output/couverture-fonctionnelle-{projet}-V{n}.md` |
 | `outline-generator` (skill) | Construit la trame synthétique (fil rouge + groupes de sections) | via `skill-executor` | `output/trame-{projet}-V{n}.md` |
 | `trame-reviewer` (agent) | Revue critique 3 lentilles : storytelling, cohérence, pertinence | appel Agent direct | `output/revue-{projet}.md` |
 
@@ -48,7 +48,18 @@ Outils prévus (feuille de route) : chiffrage, rédaction de sections. Pour tout
 
 `functional-coverage` vise **la fonction** — ni l'epic (trop large : c'est la brique), ni la user story (trop fine : c'est un détail de la fonction). Une fonction est une capacité autonome, nommée par un groupe nominal de 2 à 5 mots (« Génération de facture », « Vérification de SIRET »), qu'on peut chiffrer d'un bloc. Compter 8 à 20 fonctions par brique applicative, 2 à 6 par service tiers.
 
-Les répétitions entre briques sont voulues : « Authentification » sur le portail et sur le back-office, ce sont deux charges. Les fonctions *(déduite)* — nécessaires mais non demandées — doivent être validées par le client avant d'entrer dans un chiffrage.
+Le livrable est **tabulaire** : un tableau par brique, une ligne par fonction — donc une ligne par charge à estimer — avec une référence (`PORT-01`), un statut (`Explicite` / `Déduite` / `À confirmer`) et une colonne de précisions pour le chiffrage. Les exclusions, les éléments transverses et les zones d'ombre ont leurs propres tables en fin de document.
+
+Les répétitions entre briques sont voulues : « Authentification » sur le portail et sur le back-office, ce sont deux charges. Les fonctions `Déduite` — nécessaires mais non demandées — et les `À confirmer` doivent être tranchées avec le client avant d'entrer dans un chiffrage.
+
+### Le découpage se négocie avant, pas après
+
+Le schéma de regroupement se décide **dans le fil principal, avant de lancer l'outil** — le corriger ensuite impose de tout régénérer pour un arbitrage qui se tranche en une question. L'orchestrateur s'appuie sur les résumés de `output/tmp/` (jamais sur les sources) pour proposer :
+
+- **un axe** : par brique technique (le défaut : une brique par application ou interface, plus une par service tiers), par module fonctionnel (par domaine métier), ou par lot de chiffrage (calé sur le devis ou les lots de l'AO) ;
+- **un grain** : la liste des briques pressenties et leur nombre. Viser 5 à 10 ; au-delà de 12, on confond brique et fonction. Un parcours cohérent — un tunnel d'achat — est **une** brique, pas six.
+
+Le schéma retenu est consigné dans `## Décisions retenues` de `progression.md` et transmis au sous-agent, qui l'applique sans le redéfinir.
 
 ### Qui amende la couverture
 
@@ -82,6 +93,17 @@ Relancé, le skill **repart du fichier existant** et respecte les amendements d�
 - **`output/contexte.md`** est le **socle de la propale** : contexte, objectifs, enjeux, périmètre, précédents, plus la qualification de la mission (4 axes). Il met au clair la raison d'être du projet et la lecture qu'Orkester en fait — tous les livrables suivants s'y adossent. Il est **co-écrit** par Claude et l'utilisateur, jamais produit en aveugle par un sous-agent.
 - **Toute session est reprenable depuis une conversation vierge** à partir de `progression.md` + `output/contexte.md` + les fichiers produits. À la réouverture, l'orchestrateur lit `progression.md`, croise `## Étapes` avec les fichiers réellement présents, et résume l'état.
 - Les sous-agents mettent à jour `progression.md` au fil de leurs tâches. `output/contexte.md` n'évolue qu'avec l'utilisateur.
+
+### La cohérence du socle
+
+Les décisions structurantes se prennent **en aval** — on tranche un périmètre en établissant la couverture fonctionnelle, un angle en construisant la trame. Sans propagation, `output/contexte.md` se périme en silence et l'outil suivant travaille sur une base fausse.
+
+Deux mécanismes, tenus par l'orchestrateur :
+
+- **Le réflexe** — après chaque livrable, se demander si ce qui vient d'être décidé contredit ou dépasse le socle. Déclencheurs les plus fréquents : périmètre modifié, enjeu qui émerge, axe de qualification faux, contrainte de budget ou de délai qui apparaît, précédent retenu qui change. Si oui : le dire, mettre le socle à jour avec l'utilisateur, consigner la décision dans `## Décisions retenues` de `progression.md` avec la marque `→ socle mis à jour`.
+- **Le contrôle** — avant de lancer un outil qui lit le socle (`outline-generator`, `trame-reviewer`, rédaction), vérifier qu'aucune décision de `## Décisions retenues` n'est restée sans cette marque. S'il en reste, propager d'abord. Même contrôle à la reprise d'une session.
+
+Seul ce qui est **tranché** se propage : ni une hypothèse de travail, ni une préférence exprimée en passant.
 
 ### Les 4 axes de qualification de la mission
 
