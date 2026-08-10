@@ -41,7 +41,7 @@ Lancer un agent spécialisé directement court-circuite le chargement du context
 
 Le fonctionnement par défaut :
 
-- La création et la modification des fichiers de travail sont **toujours déléguées aux sous-agents**. Le fil principal n'écrit lui-même que les deux fichiers de pilotage de la session : `output/contexte.md`, co-produit avec l'utilisateur à l'initialisation, et les mises à jour de `progression.md` qui en découlent.
+- La création et la modification des fichiers de travail sont **toujours déléguées aux sous-agents**. Le fil principal n'écrit lui-même que les deux fichiers de pilotage de la session : `output/contexte.md`, co-produit avec l'utilisateur à l'initialisation, et les mises à jour de `progression.md` qui en découlent. Seule autre exception, encadrée : les retouches dictées par l'utilisateur sur la couverture fonctionnelle (voir l'outil `functional-coverage`).
 - Les sous-agents retournent un **résumé court** de leur travail (statut, chemins produits, points saillants) — c'est ce résumé qui est relayé à l'utilisateur. Le fil principal n'a pas besoin de lire les fichiers produits pour en rendre compte.
 - **Lister l'espace de travail** (noms, tailles, dates) est toujours permis : vérifier l'état, lever une ambiguïté sur un chemin, confirmer qu'un sous-agent a bien produit ce qu'il annonce.
 
@@ -246,9 +246,33 @@ Décompose les documents sources en **fonctions à réaliser**, regroupées par 
 - **Sorties** : `output/couverture-fonctionnelle-{projet}-V{n}.md` (versionné, jamais écrasé) ; `## Étapes` et `## Livrables` de `progression.md` mis à jour.
 - **Retour** : un résumé court (briques identifiées et nombre de fonctions par brique, fonctions déduites, exclusions, zones d'ombre) — le relayer tel quel.
 
-**Itérer plutôt que corriger à la main.** L'utilisateur va presque toujours amender la couverture — il connaît des fonctions que les sources ne portent pas et sait ce qui a été dit au client. Recueillir ses retours dans le fil principal, puis **relancer l'outil** avec ces retours pour produire une V{n+1}. Ne pas éditer le fichier depuis le fil principal.
-
 Porter une attention particulière aux fonctions marquées *(déduite)* : elles portent une charge que le client n'a pas demandée. Les faire valider explicitement avant qu'elles n'entrent dans un chiffrage.
+
+#### Amender la couverture — qui fait quoi
+
+L'utilisateur va presque toujours amender la couverture : il connaît des fonctions que les sources ne portent pas et sait ce qui a été dit au client. Ce fichier fait donc exception à la règle de délégation — l'orchestrateur peut l'éditer lui-même, mais seulement dans un cas précis.
+
+**L'orchestrateur édite directement le fichier** quand l'utilisateur *dicte le résultat* et que tout se joue à l'intérieur de la couverture :
+
+- ajouter, retirer ou renommer une fonction qu'il désigne ;
+- déplacer une fonction d'une brique à l'autre ;
+- changer un statut (lever un *(à confirmer)*, valider une *(déduite)*, basculer une fonction en hors périmètre) ;
+- renommer, fusionner, scinder ou réordonner des briques, réorganiser les listes ;
+- corriger une formulation, une coquille, une ligne des sections de fin.
+
+Ces retouches se font **sur place**, sans changer le numéro de version : V{n} reste V{n}.
+
+**Déléguer à `skill-executor` pour une nouvelle version V{n+1}** dès que la demande engage un jugement, une planification, ou la moindre lecture hors de la couverture :
+
+- il faut retourner aux sources ou aux résumés — « vérifie qu'on n'a rien oublié côté paiement », « le client a envoyé un addendum » ;
+- il faut arbitrer la granularité — « cette fonction est trop grosse, éclate-la », « ces trois-là n'en font qu'une » ;
+- il faut ajouter une brique entière ou étendre le périmètre ;
+- il faut re-challenger la complétude avec le répertoire de fonctions ;
+- l'utilisateur exprime une intention sans dicter le résultat — « revois le découpage », « harmonise les intitulés », « est-ce complet ? ».
+
+Deux tests pour trancher : **l'utilisateur dicte-t-il le résultat, ou attend-il un jugement ?** et **faut-il ouvrir un autre fichier que la couverture elle-même ?** Une réponse « jugement » ou « oui » impose la délégation — le second test est impératif : le fil principal ne lit jamais les sources. En cas de doute, déléguer.
+
+Quand les retouches directes s'accumulent au point de déformer la structure d'origine, proposer une régénération propre en V{n+1} plutôt que de continuer à empiler.
 
 ### Création de trame sur mesure — skill `outline-generator`
 

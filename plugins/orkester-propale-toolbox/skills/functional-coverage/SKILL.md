@@ -138,7 +138,15 @@ Règles de sortie :
 
 ## Itération
 
-Quand l'utilisateur corrige la couverture (fonction ajoutée, retirée, renommée, périmètre déplacé), produire une **nouvelle version** V{n+1} intégrant ses retours, sans jamais écraser la précédente. Les retours de l'utilisateur priment sur la déduction depuis les sources : il connaît le deal et ce qui a été dit au client.
+Ce skill est relancé quand un amendement de la couverture demande un jugement, une planification ou une relecture des sources — les retouches simples dictées par l'utilisateur (renommer, déplacer, retirer une fonction, réordonner des briques) sont appliquées directement par l'orchestrateur, sans passer par ici.
+
+Dans ce cas :
+
+1. **Partir de la dernière version existante**, telle qu'elle est sur le disque. Elle a pu être amendée à la main par l'orchestrateur depuis la génération précédente : **ces amendements font foi**. Ne jamais régénérer depuis les seules sources en écrasant des arbitrages déjà pris — repérer les écarts, les conserver, et ne retoucher que ce que la demande impose.
+2. **Traiter la demande** transmise dans le prompt d'invocation, en revenant aux sources et au répertoire autant que nécessaire.
+3. **Produire une nouvelle version** V{n+1}, sans jamais écraser la précédente.
+
+Les retours de l'utilisateur priment sur la déduction depuis les sources : il connaît le deal et ce qui a été dit au client. Si l'un de ses retours contredit frontalement une source, l'appliquer quand même et le signaler dans le résumé final.
 
 ## Quand consulter la base orkester-kb
 

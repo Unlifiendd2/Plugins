@@ -50,9 +50,20 @@ Outils prévus (feuille de route) : chiffrage, rédaction de sections. Pour tout
 
 Les répétitions entre briques sont voulues : « Authentification » sur le portail et sur le back-office, ce sont deux charges. Les fonctions *(déduite)* — nécessaires mais non demandées — doivent être validées par le client avant d'entrer dans un chiffrage.
 
+### Qui amende la couverture
+
+La couverture se retravaille avec l'utilisateur, et la répartition dépend de ce qu'il demande :
+
+- **L'orchestrateur édite le fichier sur place** quand l'utilisateur dicte le résultat et que tout se joue dans la couverture : ajouter, retirer, renommer, déplacer une fonction, changer un statut, réorganiser les briques, corriger une formulation. La version ne change pas.
+- **Le skill est relancé pour une V{n+1}** dès que la demande engage un jugement (granularité, complétude, nouvelle brique) ou impose de rouvrir les sources, les résumés ou le répertoire de fonctions.
+
+Deux tests : *l'utilisateur dicte-t-il le résultat ou attend-il un jugement ?* et *faut-il ouvrir un autre fichier que la couverture ?* Jugement ou lecture externe → délégation, sans discussion pour le second cas : le fil principal ne lit jamais les sources. En cas de doute, déléguer. Quand les retouches directes s'accumulent au point de déformer la structure, régénérer proprement en V{n+1}.
+
+Relancé, le skill **repart du fichier existant** et respecte les amendements déjà appliqués à la main : il ne régénère pas depuis les sources en écrasant des arbitrages pris avec l'utilisateur.
+
 ## Le principe central — fil principal propre, délégation systématique
 
-- L'orchestrateur (`propale-toolbox`) vit **dans le fil principal**. Il ne crée/modifie **jamais** de fichier de travail lui-même — seules exceptions : `output/contexte.md`, co-écrit avec l'utilisateur à l'initialisation, et les mises à jour de `progression.md` qui en découlent.
+- L'orchestrateur (`propale-toolbox`) vit **dans le fil principal**. Il ne crée/modifie **jamais** de fichier de travail lui-même — seules exceptions : `output/contexte.md`, co-écrit avec l'utilisateur à l'initialisation ; les mises à jour de `progression.md` qui en découlent ; et les retouches dictées par l'utilisateur sur la couverture fonctionnelle.
 - Toute production de contenu est **déléguée à un sous-agent en contexte frais**, qui écrit les fichiers et ne retourne qu'un **résumé court** (statut, chemins, points saillants, hypothèses). C'est ce résumé qui est relayé.
 - L'orchestrateur peut **lister** l'espace de travail à volonté, et **lire** un fichier produit uniquement quand un échange avec l'utilisateur le nécessite (répondre à une question, comparer des versions, citer un passage) — pas pour produire.
 - **Pourquoi** : un fil principal court reste pertinent, rapide et peu coûteux ; les sous-agents en contexte frais évitent les biais d'accumulation et isolent chaque tâche.
