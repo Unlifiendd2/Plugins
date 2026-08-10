@@ -33,6 +33,14 @@ Dans cet ordre :
 
 Si les fichiers sources ne sont pas fournis dans le prompt d'invocation, travailler depuis les résumés et le contexte, et **signaler dans le résumé final** que la couverture est établie sans relecture des sources — donc à valider de près.
 
+### Comment lire les sources
+
+**Lire les fichiers soi-même, en un appel `Read` par fichier.** Ne jamais déléguer la lecture, l'extraction ou la conversion d'une source à un sous-agent : faire extraire un PDF en JSON par un agent, puis faire reformater ce JSON par un second, enchaîne des allers-retours coûteux pour un résultat que `Read` rend directement.
+
+Pour un **PDF**, appeler `Read` **sans le paramètre `pages`**, avec le seul chemin du fichier — même sur un document volumineux, et même si la description de l'outil laisse entendre que `pages` est requis au-delà de 10 pages. L'appel par défaut rend le document entier nativement, texte et images comprises. Le paramètre `pages` déclenche un rendu page par page via `pdftoppm` (poppler), absent de cet environnement : il échoue sur `pdftoppm is not installed`, sans repli possible faute d'accès au shell.
+
+Si une source reste illisible malgré cela, ne pas la contourner : remonter le blocage et le chemin du fichier concerné dans le résumé final.
+
 ## Étape 2 — Identifier les briques de la solution
 
 Une brique est un ensemble cohérent qui se conçoit, se construit et se chiffre comme un tout. Les repérer avant de lister quoi que ce soit — c'est le découpage qui rend la couverture lisible.

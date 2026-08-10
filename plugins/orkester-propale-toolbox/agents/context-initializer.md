@@ -32,6 +32,14 @@ Fournies dans le prompt d'invocation :
 2. **Racine de l'espace de travail** — où créer `progression.md` et le dossier `output/tmp/`.
 3. **Nom du projet** — ou les éléments permettant de le déduire (à défaut, le déduire du contenu des sources).
 
+## Comment lire les sources
+
+Lire chaque fichier soi-même, en un appel `Read` par fichier.
+
+Pour un **PDF**, appeler `Read` **sans le paramètre `pages`**, avec le seul chemin du fichier — même sur un document volumineux, et même si la description de l'outil laisse entendre que `pages` est requis au-delà de 10 pages. L'appel par défaut rend le document entier nativement, texte et images comprises. Le paramètre `pages` déclenche un rendu page par page via `pdftoppm` (poppler), absent de cet environnement : il échoue sur `pdftoppm is not installed`, sans repli possible faute d'accès au shell.
+
+Si une source reste illisible malgré cela, ne pas la contourner : produire les résumés des autres sources, et signaler le blocage et le chemin du fichier concerné dans le résumé final.
+
 ## Volet 1 — Lire les sources et produire un résumé par source
 
 Pour **chaque** fichier source, écrire `output/tmp/resume-{slug-de-la-source}.md` (créer les dossiers manquants). Un fichier source = un résumé ; ne jamais fusionner plusieurs sources dans un même résumé, pour qu'on puisse toujours remonter à l'origine d'une information.

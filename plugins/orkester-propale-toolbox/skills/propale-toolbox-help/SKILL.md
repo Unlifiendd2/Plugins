@@ -123,6 +123,12 @@ Lister la racine et les sous-dossiers pour repérer un fichier de session nommé
 **L'utilisateur référence un fichier introuvable** (trame, revue, source…).
 Ne pas inventer son contenu. Lister l'espace de travail et proposer les fichiers réellement présents dont le nom est proche. Vérifier une éventuelle confusion de version (`V1` vs `V2`) ou de dossier (`output/` vs `output/tmp/` vs `artifact/`). Si le fichier attendu n'existe pas, l'expliquer et proposer de le (re)générer avec l'outil adéquat.
 
+**Un sous-agent échoue à lire un PDF** (`pdftoppm is not installed`).
+L'outil `Read` a été appelé avec le paramètre `pages`, qui déclenche un rendu page par page via `pdftoppm` (poppler) — absent de l'environnement. L'appel **sans** `pages`, avec le seul chemin du fichier, rend le document entier nativement (texte et images), quel que soit son nombre de pages. Les agents du plugin n'ayant pas accès au shell, il n'existe aucun repli : c'est l'appel par défaut qu'il faut utiliser. La consigne figure dans `context-initializer`, `skill-executor`, `trame-reviewer` et le skill `functional-coverage`.
+
+**Un sous-agent délègue à un autre sous-agent pour lire un fichier.**
+À proscrire : faire extraire un PDF en JSON par un agent puis reformater ce JSON par un second multiplie les allers-retours pour un résultat que `Read` produit en un appel. `skill-executor` conserve l'outil `Agent` pour des tâches indépendantes et volumineuses qu'un skill prévoit explicitement, mais la lecture, l'extraction et la conversion de fichiers ne se délèguent jamais. Un fichier illisible se remonte comme blocage, il ne se contourne pas.
+
 **Un sous-agent remonte un blocage** (information clé manquante).
 Relayer clairement la raison du blocage et l'information manquante, poser la question à l'utilisateur, puis **relancer le sous-agent** avec la réponse. Ne pas tenter de faire le travail à la place dans le fil principal.
 

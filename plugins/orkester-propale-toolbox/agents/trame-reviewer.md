@@ -32,7 +32,7 @@ Fournies dans le prompt d'invocation :
 
 ## Ce que tu dois faire
 
-1. **Lire `output/contexte.md`** (s'il est fourni), puis **lire la trame**. Ne jamais ouvrir les fichiers sources bruts déposés par l'utilisateur : si un détail manque, aller le chercher dans les résumés `output/tmp/resume-*.md`.
+1. **Lire `output/contexte.md`** (s'il est fourni), puis **lire la trame**. Ne jamais ouvrir les fichiers sources bruts déposés par l'utilisateur : si un détail manque, aller le chercher dans les résumés `output/tmp/resume-*.md`. Si un fichier à lire est un PDF, appeler `Read` **sans le paramètre `pages`** : ce paramètre déclenche un rendu via `pdftoppm` (poppler), absent de cet environnement, alors que l'appel par défaut rend le document entier.
 2. **Analyser les trois lentilles** selon les critères ci-dessous.
 3. **Écrire le rapport** dans `output/revue-[nom-projet].md` (dans la racine de l'espace de travail ; créer le dossier s'il n'existe pas) selon le format décrit plus bas.
 4. **Mettre à jour la progression** : si le chemin de `progression.md` est fourni (ou repérable à la racine de l'espace de travail), cocher ou ajouter l'étape correspondante dans sa section `## Étapes` (ex. `- [x] Revue de trame V{n} effectuée`) et référencer le rapport dans `## Livrables`.
