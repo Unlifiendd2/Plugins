@@ -28,9 +28,10 @@ Le plugin aide un project owner Orkester à construire une proposition commercia
 1. **Démarrer** — ouvrir une conversation dans le dossier de travail (idéalement avec les fichiers sources : cahier des charges, AO, notes, à la racine). Le skill `propale-toolbox` s'initialise : il inventorie l'espace de travail et identifie les documents présents. S'il trouve un `progression.md`, c'est une reprise de session. Sinon, en première session, il délègue à l'agent `context-initializer` qui lit les sources, écrit un **résumé par source** dans `output/tmp/`, cherche dans `orkester-kb` les projets/clients/secteurs déjà traités par Orkester, et crée `progression.md`.
 2. **Cadrer** — l'orchestrateur relaie ce que le sous-agent a compris, **présente les précédents Orkester** et demande lesquels retenir, puis construit `output/contexte.md` **avec l'utilisateur** : contexte, objectifs, enjeux, périmètre, précédents. C'est le socle de la propale — le moment où l'on met au clair la raison d'être du projet et la lecture qu'Orkester en fait.
 3. **Délimiter** — arrêter le schéma de regroupement avec l'orchestrateur (axe et nombre de briques), puis lancer `functional-coverage` pour décomposer les sources en fonctions à réaliser (`output/couverture-fonctionnelle-{projet}-V{n}.md`). Un tableau, une ligne par fonction : c'est la base du chiffrage. Étape indépendante de la trame : l'une ou l'autre peut venir en premier.
-4. **Structurer** — définir le fil rouge avec l'orchestrateur (proposé puis challengé), puis lancer `outline-generator` pour produire la trame (`output/trame-{projet}-V{n}.md`).
-5. **Réviser** — lancer `trame-reviewer` pour une revue critique 3 lentilles (`output/revue-{projet}.md`), itérer sur la trame si besoin (nouvelle version V{n+1}).
-6. **Consolider** — en fin de session, déléguer la consolidation des livrables de `output/` vers un fichier final dans `artifact/`.
+4. **Chiffrer** — relever les TJM avec `tjm-finder` si la grille n'existe pas encore, puis lancer `pricing-estimator` sur la couverture (`output/chiffrage-{projet}-V{n}.md`).
+5. **Structurer** — définir le fil rouge avec l'orchestrateur (proposé puis challengé), puis lancer `outline-generator` pour produire la trame (`output/trame-{projet}-V{n}.md`).
+6. **Réviser** — lancer `trame-reviewer` pour une revue critique 3 lentilles (`output/revue-{projet}.md`), itérer sur la trame si besoin (nouvelle version V{n+1}).
+7. **Consolider** — en fin de session, déléguer la consolidation des livrables de `output/` vers un fichier final dans `artifact/`.
 
 À chaque étape, l'orchestrateur présente le résultat et **suggère** la suite sans jamais l'enchaîner automatiquement : c'est l'utilisateur qui décide de l'outil suivant.
 
@@ -39,10 +40,12 @@ Le plugin aide un project owner Orkester à construire une proposition commercia
 | Outil | Rôle | Mécanisme | Sortie |
 |---|---|---|---|
 | `functional-coverage` (skill) | Décompose les sources en un tableau de fonctions à réaliser, par brique — base du chiffrage | via `skill-executor` | `output/couverture-fonctionnelle-{projet}-V{n}.md` |
+| `tjm-finder` (agent) | Relève les TJM Orkester par profil dans `orkester-kb` — réutilisable d'un chiffrage à l'autre | appel Agent direct | `output/tmp/tjm-orkester.md` |
+| `pricing-estimator` (skill) | Chiffre une couverture fonctionnelle : charges par profil, TJM appliqués, transverses, synthèse | via `skill-executor` | `output/chiffrage-{projet}-V{n}.md` |
 | `outline-generator` (skill) | Construit la trame synthétique (fil rouge + groupes de sections) | via `skill-executor` | `output/trame-{projet}-V{n}.md` |
 | `trame-reviewer` (agent) | Revue critique 3 lentilles : storytelling, cohérence, pertinence | appel Agent direct | `output/revue-{projet}.md` |
 
-Outils prévus (feuille de route) : chiffrage, rédaction de sections. Pour toute tâche non couverte, l'orchestrateur délègue à un sous-agent générique avec un prompt complet.
+Outils prévus (feuille de route) : rédaction de sections. Pour toute tâche non couverte, l'orchestrateur délègue à un sous-agent générique avec un prompt complet.
 
 ### Le grain de la couverture fonctionnelle
 
@@ -51,6 +54,18 @@ Outils prévus (feuille de route) : chiffrage, rédaction de sections. Pour tout
 Le livrable est **tabulaire** : un tableau par brique, une ligne par fonction — donc une ligne par charge à estimer — avec une référence (`PORT-01`), un statut (`Explicite` / `Déduite` / `À confirmer`) et une colonne de précisions pour le chiffrage. Les exclusions, les éléments transverses et les zones d'ombre ont leurs propres tables en fin de document.
 
 Les répétitions entre briques sont voulues : « Authentification » sur le portail et sur le back-office, ce sont deux charges. Les fonctions `Déduite` — nécessaires mais non demandées — et les `À confirmer` doivent être tranchées avec le client avant d'entrer dans un chiffrage.
+
+### La chaîne couverture → chiffrage
+
+Le chiffrage ne part jamais des sources : il part de la **couverture fonctionnelle**, dont chaque ligne devient une ligne de charge. La référence (`PORT-01`) est reprise à l'identique, ce qui permet de remonter d'un total à la fonction qui le porte et de discuter un budget sans le refaire.
+
+- **Les TJM sont relevés une fois par espace de travail.** `tjm-finder` interroge `orkester-kb` et écrit `output/tmp/tjm-orkester.md` : profil, taux de référence, fourchette observée, niveau de confiance, propales sources. La grille est réutilisée par tous les chiffrages suivants — on ne relance l'agent que si elle est absente, ou si l'utilisateur demande un rafraîchissement.
+- **Aucun taux ne s'invente.** Un profil absent de la base est marqué `Non trouvé` : la fonction est alors chiffrée en jours, sans montant, et le point remonte en vigilance. Une confiance faible se signale plutôt que de se lisser.
+- **Trois nombres, pas un.** Le chiffrage présente le socle engagé (fonctions `Explicite`), le sous réserve de validation (`Déduite` + `À confirmer`) et le total. Un « sous réserve » important veut dire que le périmètre n'est pas stabilisé — à trancher avec le client avant d'envoyer quoi que ce soit.
+- **Le chiffrage ne s'édite jamais à la main**, contrairement à la couverture : ses totaux dépendent de chaque ligne, une retouche isolée les fausse en silence. Toute modification passe par une V{n+1}.
+- **Il se périme avec la couverture.** Il porte en tête la version dont il découle ; si la couverture bouge, le chiffrage est à refaire.
+
+Si le total dépasse une contrainte budgétaire inscrite dans le socle, le skill le signale avec l'écart chiffré. La réponse est d'arbitrer le périmètre — donc de reprendre la couverture — jamais de raboter des charges pour atteindre la cible.
 
 ### Le découpage se négocie avant, pas après
 
@@ -118,10 +133,12 @@ orkester-propale-toolbox/
 ├── skills/
 │   ├── propale-toolbox/     # Orchestrateur, point d'entrée (fil principal)
 │   ├── functional-coverage/ # Couverture fonctionnelle (+ references/repertoire-fonctions.md)
+│   ├── pricing-estimator/   # Chiffrage (+ references/methode-chiffrage.md)
 │   ├── outline-generator/   # Création de trame (+ references/catalogue-sections.md)
 │   └── propale-toolbox-help/ # Ce skill de documentation
 └── agents/
     ├── context-initializer.md # Init de session : résumés des sources + Orkester-kb + progression.md
+    ├── tjm-finder.md        # Relevé des TJM par profil depuis Orkester-kb
     ├── skill-executor.md    # Exécute un skill en contexte frais (accès Orkester-kb)
     └── trame-reviewer.md    # Revue 3 lentilles en contexte frais (accès Orkester-kb)
 ```
@@ -155,6 +172,12 @@ Lister la racine et les sous-dossiers pour repérer un fichier de session nommé
 
 **L'utilisateur référence un fichier introuvable** (trame, revue, source…).
 Ne pas inventer son contenu. Lister l'espace de travail et proposer les fichiers réellement présents dont le nom est proche. Vérifier une éventuelle confusion de version (`V1` vs `V2`) ou de dossier (`output/` vs `output/tmp/` vs `artifact/`). Si le fichier attendu n'existe pas, l'expliquer et proposer de le (re)générer avec l'outil adéquat.
+
+**L'utilisateur demande un chiffrage sans couverture fonctionnelle.**
+Ne pas chiffrer : un budget calé sur un périmètre qui n'est écrit nulle part n'est vérifiable par personne. Expliquer la chaîne — la couverture établit ce qu'il y a à faire, le chiffrage lui adosse combien — et proposer de lancer `functional-coverage` d'abord. Si l'utilisateur dispose déjà d'un périmètre rédigé ailleurs, l'inviter à le déposer comme source, puis passer par la couverture.
+
+**Un profil est marqué `Non trouvé` dans la grille TJM.**
+La base ne contient pas de taux pour ce profil. Ne jamais en inventer un : le demander à l'utilisateur, puis relancer le chiffrage avec le taux fourni. En attendant, la fonction concernée est chiffrée en jours sans montant — le total est donc partiel, et cela doit être dit à l'utilisateur.
 
 **Un sous-agent échoue à lire un PDF** (`pdftoppm is not installed`).
 L'outil `Read` a été appelé avec le paramètre `pages`, qui déclenche un rendu page par page via `pdftoppm` (poppler) — absent de l'environnement. L'appel **sans** `pages`, avec le seul chemin du fichier, rend le document entier nativement (texte et images), quel que soit son nombre de pages. Les agents du plugin n'ayant pas accès au shell, il n'existe aucun repli : c'est l'appel par défaut qu'il faut utiliser. La consigne figure dans `context-initializer`, `skill-executor`, `trame-reviewer` et le skill `functional-coverage`.

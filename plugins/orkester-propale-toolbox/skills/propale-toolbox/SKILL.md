@@ -61,14 +61,14 @@ La lecture directe des **fichiers produits** — résumés de `output/tmp/`, liv
 ├── {fichiers sources}        # Déposés par l'utilisateur (cahier des charges, AO, notes…) — jamais lus par le fil principal
 ├── output/
 │   ├── contexte.md           # Socle de la propale : contexte, objectifs, enjeux, périmètre, précédents
-│   ├── tmp/                  # Résumés des sources + fichiers intermédiaires des sous-agents
-│   └── …                     # Autres livrables (trames, revues…)
+│   ├── tmp/                  # Résumés des sources, grille TJM, fichiers intermédiaires des sous-agents
+│   └── …                     # Autres livrables (couverture, chiffrage, trames, revues…)
 └── artifact/                 # Fichiers finaux complets — marquent en général une fin de session
 ```
 
 - **`progression.md`** — état de la session : identification, sources et leurs résumés, précédents Orkester, décisions retenues, étapes franchies, livrables produits. C'est le fichier qu'on relit pour reprendre une session depuis une conversation vierge.
 - **`output/contexte.md`** — le socle de la propale : la raison d'être du projet et la lecture qu'Orkester en fait. Tous les livrables suivants s'y adossent.
-- **`output/tmp/`** — résumés des sources (`resume-{source}.md`) et fichiers de travail intermédiaires. Les résumés sont la matière de travail du fil principal ; le reste n'est jamais présenté à l'utilisateur comme livrable.
+- **`output/tmp/`** — résumés des sources (`resume-{source}.md`), grille TJM (`tjm-orkester.md`) et fichiers de travail intermédiaires. Résumés et grille TJM sont de la matière de référence, réutilisée d'une tâche à l'autre et consultable ; le reste n'est jamais présenté à l'utilisateur comme livrable.
 - **`output/`** — livrables de la session (trames, sections rédigées, rapports de revue). C'est là que l'utilisateur trouve les résultats.
 - **`artifact/`** — versions finales complètes et consolidées. Un fichier déposé ici marque en général la clôture d'une session de travail.
 
@@ -170,6 +170,8 @@ Créé par l'agent `context-initializer`, tenu à jour par les sous-agents au fi
 - [x] Précédents Orkester recherchés
 - [ ] `output/contexte.md` produit avec l'utilisateur
 - [ ] Couverture fonctionnelle établie
+- [ ] Grille TJM relevée — `output/tmp/tjm-orkester.md`
+- [ ] Chiffrage produit
 - [ ] Trame créée
 - [ ] Revue de trame effectuée
 
@@ -259,7 +261,7 @@ Si un sous-agent remonte un blocage (information clé manquante), poser la quest
 
 ## Outils disponibles
 
-La boîte à outils se remplit progressivement ; chaque outil ajouté au plugin est documenté ici (quoi, quand, quel mécanisme d'invocation, quelles entrées, quelles sorties). Outils prévus : chiffrage, rédaction de sections.
+La boîte à outils se remplit progressivement ; chaque outil ajouté au plugin est documenté ici (quoi, quand, quel mécanisme d'invocation, quelles entrées, quelles sorties). Outils prévus : rédaction de sections.
 
 Si l'utilisateur demande une tâche non couverte, la déléguer à un sous-agent générique avec un prompt complet, en respectant les règles de délégation ci-dessus.
 
@@ -315,6 +317,40 @@ Ces retouches se font **sur place**, sans changer le numéro de version : V{n} r
 Deux tests pour trancher : **l'utilisateur dicte-t-il le résultat, ou attend-il un jugement ?** et **faut-il ouvrir un autre fichier que la couverture elle-même ?** Une réponse « jugement » ou « oui » impose la délégation — le second test est impératif : le fil principal ne lit jamais les sources. En cas de doute, déléguer.
 
 Quand les retouches directes s'accumulent au point de déformer la structure d'origine, proposer une régénération propre en V{n+1} plutôt que de continuer à empiler.
+
+### Chiffrage — agent `tjm-finder` puis skill `pricing-estimator`
+
+Transforme une couverture fonctionnelle en budget : une charge par profil pour chaque fonction, les TJM d'Orkester appliqués, les charges transverses, et la consolidation par brique puis globale. À proposer une fois la couverture fonctionnelle établie et stabilisée avec l'utilisateur.
+
+**Prérequis strict** : une couverture fonctionnelle existe dans `output/`. Sans elle, ne pas chiffrer — proposer d'abord `functional-coverage`. Chiffrer un périmètre qui n'est écrit nulle part produit un nombre que personne ne peut vérifier.
+
+Le chiffrage se fait en **deux délégations**, la première étant conditionnelle.
+
+**1. Relever les TJM — agent `tjm-finder`, seulement si la grille n'existe pas.**
+
+Vérifier d'abord la présence de `output/tmp/tjm-orkester.md` par un listing. Si le fichier existe, **ne pas relancer l'agent** : la grille est réutilisable d'un chiffrage à l'autre, et une nouvelle interrogation de la base ne produirait rien de plus. Proposer un rafraîchissement seulement si l'utilisateur le demande, ou si la grille est manifestement pauvre (deux ou trois profils, sources uniques, confiance faible partout).
+
+- **Mécanisme** : agent dédié — un seul appel Agent vers `tjm-finder` (`${CLAUDE_PLUGIN_ROOT}/agents/tjm-finder.md`).
+- **Entrées à passer** : la racine de l'espace de travail ; le contexte du projet en une ligne (type de mission, produit, secteur) pour privilégier les propales comparables.
+- **Sorties** : `output/tmp/tjm-orkester.md` — grille par profil avec fourchette, confiance et sources.
+- **Retour** : profils relevés et leurs taux, dispersion notable, profils non trouvés, fiabilité d'ensemble. Relayer tel quel — et **signaler explicitement à l'utilisateur les profils `Non trouvé` et les confiances faibles** : ce sont eux qui fragiliseront le chiffrage.
+
+**2. Produire le chiffrage — skill `pricing-estimator`.**
+
+- **Mécanisme** : skill via `skill-executor` (le skill s'appuie sur `references/methode-chiffrage.md`) — un seul appel Agent vers `skill-executor` en lui indiquant le skill `pricing-estimator`.
+- **Entrées à passer** : le chemin de la **couverture fonctionnelle** à chiffrer (préciser la version) ; le chemin de `output/tmp/tjm-orkester.md` ; le chemin de `output/contexte.md` ; le chemin de `progression.md` ; la racine de l'espace de travail ; le nom du projet.
+- **Sorties** : `output/chiffrage-{projet}-V{n}.md` (versionné, jamais écrasé) — un tableau par brique reprenant les références de la couverture, les charges transverses, la synthèse en trois nombres ; `## Étapes` et `## Livrables` de `progression.md` mis à jour.
+- **Retour** : socle engagé, sous réserve de validation, total, charge en jours, hypothèses et points de vigilance — le relayer tel quel.
+
+**Ce qu'il faut regarder au retour.** Trois choses méritent d'être portées à l'utilisateur sans attendre qu'il les demande :
+
+- **Le sous-total « sous réserve de validation »** — il agrège les fonctions `Déduite` et `À confirmer`. Un montant important signifie que le périmètre n'est pas stabilisé : c'est un sujet à trancher avec le client avant d'envoyer une propale.
+- **Les taux de confiance faible et les profils non trouvés** — ils disent où le chiffrage repose sur du sable.
+- **L'écart à une contrainte budgétaire** annoncée dans le socle, si le skill en signale un. Ne jamais demander de « faire rentrer » le chiffrage dans la cible en rabotant les charges : arbitrer le périmètre, ce qui passe par une nouvelle version de la couverture.
+
+**Le chiffrage ne s'édite jamais dans le fil principal** — contrairement à la couverture fonctionnelle. Ses totaux dépendent de chaque ligne : une retouche isolée les rend faux sans que rien ne le signale. Toute modification passe par une V{n+1} produite par le skill.
+
+**Le chiffrage se périme avec la couverture.** Il porte en tête la version de couverture dont il découle. Si la couverture évolue ensuite — même d'une ligne — le signaler à l'utilisateur et proposer une nouvelle version du chiffrage plutôt que de laisser circuler un budget calé sur un périmètre révolu.
 
 ### Création de trame sur mesure — skill `outline-generator`
 

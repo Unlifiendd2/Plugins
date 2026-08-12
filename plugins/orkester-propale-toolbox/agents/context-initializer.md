@@ -128,6 +128,8 @@ Créer `progression.md` à la racine de l'espace de travail, selon ce format exa
 - [x] Précédents Orkester recherchés
 - [ ] `output/contexte.md` produit avec l'utilisateur
 - [ ] Couverture fonctionnelle établie
+- [ ] Grille TJM relevée — `output/tmp/tjm-orkester.md`
+- [ ] Chiffrage produit
 - [ ] Trame créée
 - [ ] Revue de trame effectuée
 

@@ -21,8 +21,8 @@ Boîte à outils Orkester pour la construction de propositions commerciales (pro
 ├── {fichiers sources}        # Déposés par l'utilisateur — jamais lus par le fil principal
 ├── output/
 │   ├── contexte.md           # Socle de la propale (co-écrit avec l'utilisateur)
-│   ├── tmp/                  # Résumés des sources + intermédiaires des sous-agents
-│   └── …                     # Autres livrables (trames, revues…)
+│   ├── tmp/                  # Résumés des sources, grille TJM, intermédiaires des sous-agents
+│   └── …                     # Autres livrables (couverture, chiffrage, trames, revues…)
 └── artifact/                 # Fichiers finaux complets (fin de session)
 ```
 
@@ -39,6 +39,10 @@ orkester-propale-toolbox/
 │   │   ├── SKILL.md              # Couverture fonctionnelle → output/couverture-fonctionnelle-{projet}-V{n}.md
 │   │   └── references/
 │   │       └── repertoire-fonctions.md # Répertoire des fonctions récurrentes (A à O)
+│   ├── pricing-estimator/
+│   │   ├── SKILL.md              # Chiffrage → output/chiffrage-{projet}-V{n}.md
+│   │   └── references/
+│   │       └── methode-chiffrage.md   # Démarche d'estimation, profils, charges transverses
 │   ├── outline-generator/
 │   │   ├── SKILL.md              # Création de trame → output/trame-{projet}-V{n}.md
 │   │   └── references/
@@ -47,6 +51,7 @@ orkester-propale-toolbox/
 │       └── SKILL.md              # Documentation de référence du plugin
 ├── agents/
 │   ├── context-initializer.md    # Init de session : résumés des sources + Orkester-kb + progression.md
+│   ├── tjm-finder.md             # Relevé des TJM par profil → output/tmp/tjm-orkester.md
 │   ├── skill-executor.md         # Exécution de skills en contexte frais
 │   └── trame-reviewer.md         # Revue de trame 3 lentilles → output/revue-{projet}.md
 └── README.md                     # Ce fichier
@@ -56,7 +61,8 @@ orkester-propale-toolbox/
 
 - [x] Skill point d'entrée `propale-toolbox` (orchestration, sessions, initialisation)
 - [x] Couverture fonctionnelle — skill `functional-coverage` (via `skill-executor`)
+- [x] Relevé des TJM par profil depuis Orkester-kb — agent `tjm-finder`
+- [x] Chiffrage à partir de la couverture fonctionnelle — skill `pricing-estimator` (via `skill-executor`)
 - [x] Création de trame sur mesure — skill `outline-generator` (via `skill-executor`)
 - [x] Revue de trame 3 lentilles (storytelling, cohérence, pertinence) — agent `trame-reviewer`
-- [ ] Chiffrage à partir de la couverture fonctionnelle
 - [ ] Rédaction de sections
